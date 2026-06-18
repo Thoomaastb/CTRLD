@@ -15,7 +15,7 @@ jobs:
     name: Lint (Go)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Check if Go source exists
         id: go-check
@@ -29,14 +29,14 @@ jobs:
 
       - name: Set up Go
         if: steps.go-check.outputs.exists == 'true'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
           cache: true
 
       - name: golangci-lint
         if: steps.go-check.outputs.exists == 'true'
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v9
         with:
           version: latest
           args: --timeout=5m
@@ -45,7 +45,7 @@ jobs:
     name: Lint (Node)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Check if frontend source exists
         id: node-check
@@ -59,7 +59,7 @@ jobs:
 
       - name: Set up Node
         if: steps.node-check.outputs.exists == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: web/.nvmrc
           cache: npm
@@ -84,7 +84,7 @@ jobs:
     name: Test (Go)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Check if Go tests exist
         id: go-check
@@ -98,7 +98,7 @@ jobs:
 
       - name: Set up Go
         if: steps.go-check.outputs.exists == 'true'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
           cache: true
@@ -111,7 +111,7 @@ jobs:
     name: Test (Node)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Check if frontend tests exist
         id: node-check
@@ -125,7 +125,7 @@ jobs:
 
       - name: Set up Node
         if: steps.node-check.outputs.exists == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: web/.nvmrc
           cache: npm
@@ -146,12 +146,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20
 
