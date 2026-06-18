@@ -79,6 +79,52 @@ CTRLD is different:
 
 ---
 
+## Screenshots
+
+> Design preview — UI subject to change before stable release.
+
+### Dashboard & Monitoring
+
+![CTRLD Dashboard](docs/screenshots/dashboard.png)
+
+### Login & MFA Setup
+
+| Login flow | MFA setup |
+|---|---|
+| ![Login flow](docs/screenshots/login-flow.png) | ![MFA setup](docs/screenshots/mfa-setup%23.png) |
+
+### Privileged Identity Management (PIM)
+
+![PIM Modal](docs/screenshots/pim-modal.png)
+
+### Log Viewer
+
+![Log Viewer](docs/screenshots/log-viewer.png)
+
+### Service Management
+
+![Service Controls](docs/screenshots/service-controls.png)
+
+### Audit Log
+
+![Audit Log](docs/screenshots/audit-log.png)
+
+### Setup Wizard
+
+![Setup Wizard](docs/screenshots/setup-wizard.png)
+
+### Public Status Page
+
+![Public Status](docs/screenshots/public-status.png)
+
+### Multi-Server (Hub-Spoke)
+
+| Hub overview | Hub settings | Spoke dashboard |
+|---|---|---|
+| ![Hub Overview](docs/screenshots/hub-overview.png) | ![Hub Settings](docs/screenshots/hub-settings.png) | ![Spoke Dashboard](docs/screenshots/spoke-dashboard.png) |
+
+---
+
 ## Quick Install
 
 ```bash
@@ -107,20 +153,6 @@ docker run -d \
 
 ---
 
-## Screenshots
-
-> Screenshots from the v0.1 design preview — UI is subject to change before stable release.
-
-| Dashboard | Log Viewer |
-|---|---|
-| *(screenshot)* | *(screenshot)* |
-
-| PIM Activation | Service Management |
-|---|---|
-| *(screenshot)* | *(screenshot)* |
-
----
-
 ## Roadmap
 
 | Version | Focus | Status |
@@ -132,10 +164,10 @@ docker run -d \
 | **v0.5.0** | Service management | 📋 Planned |
 | **v0.9.0** | Installer, TLS, security hardening | 📋 Planned |
 | **v1.0.0** | Stable release | 🎯 Target |
-| **v2.x** | Domains, SSL, Docker, OIDC/SSO | 🔭 Future |
+| **v2.x** | Domains, SSL, Docker, Multi-server, OIDC/SSO | 🔭 Future |
 | **v3.x** | FTP, web server, databases, Hub-SSO | 🔭 Future |
 
-Full roadmap and backlog: [Open issues](https://github.com/Thoomaastb/CTRLD/issues) · [Discussions](https://github.com/Thoomaastb/CTRLD/discussions)
+Full roadmap: [Open issues](https://github.com/Thoomaastb/CTRLD/issues) · [Discussions](https://github.com/Thoomaastb/CTRLD/discussions)
 
 ---
 
@@ -154,13 +186,13 @@ Full roadmap and backlog: [Open issues](https://github.com/Thoomaastb/CTRLD/issu
 
 ## Contributing
 
-CTRLD is in early development and feedback is the most valuable contribution right now.
+CTRLD is in early development — feedback is the most valuable contribution right now.
 
 **Ways to help:**
 
 - ⭐ Star the repo — it helps more people find the project
 - 🐛 [Open an issue](https://github.com/Thoomaastb/CTRLD/issues/new/choose) — bug reports, feature requests, questions
-- 💬 [Join a discussion](https://github.com/Thoomaastb/CTRLD/discussions) — share your use case, vote on features, ask questions
+- 💬 [Join a discussion](https://github.com/Thoomaastb/CTRLD/discussions) — share your use case, vote on features
 - 🔧 Submit a PR — see [CONTRIBUTING.md](CONTRIBUTING.md) for the process
 
 All contributors must sign the [CTRLD Contributor License Agreement (CLA)](CONTRIBUTING.md#cla) before a PR can be merged.
@@ -171,21 +203,13 @@ All contributors must sign the [CTRLD Contributor License Agreement (CLA)](CONTR
 
 CTRLD is released under the **CTRLD Non-Commercial License v1.0**.
 
-**Free for:**
-- Personal and homelab use
-- Non-profit organizations
-- Educational institutions
-- Open-source projects
+**Free for:** personal use, homelab, non-profit, education, open-source projects.
 
-**Requires a commercial license for:**
-- Hosting providers managing customer infrastructure
-- Managed service providers
-- SaaS or commercial deployments
-- Any use where CTRLD enables or supports a commercial service
+**Requires a commercial license for:** hosting providers, managed services, SaaS, or any commercial deployment.
 
 **Attribution required:** All deployments must display "Powered by CTRLD" with a functional link to [ctrld.io](https://ctrld.io) (no `rel="nofollow"`).
 
-Commercial licenses: [license@ctrld.io](mailto:license@ctrld.io) · Full license text: [LICENSE](https://github.com/Thoomaastb/CTRLD/blob/main/LICENSE)
+Commercial licenses: [license@ctrld.io](mailto:license@ctrld.io) · Full text: [LICENSE](https://github.com/Thoomaastb/CTRLD/blob/main/LICENSE)
 
 ---
 
