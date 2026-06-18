@@ -14,16 +14,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check if Go source exists
+        id: go-check
+        run: |
+          if find . -name "*.go" -not -path "./.git/*" | grep -q .; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "No Go source files yet — skipping"
+          fi
+
       - name: Set up Go
+        if: steps.go-check.outputs.exists == 'true'
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
           cache: true
 
       - name: Install govulncheck
+        if: steps.go-check.outputs.exists == 'true'
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
 
       - name: Run govulncheck
+        if: steps.go-check.outputs.exists == 'true'
         run: govulncheck ./...
 
   npm-audit:
@@ -32,7 +45,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check if frontend source exists
+        id: node-check
+        run: |
+          if [ -f "web/package-lock.json" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "No package-lock.json yet — skipping npm audit"
+          fi
+
       - name: Set up Node
+        if: steps.node-check.outputs.exists == 'true'
         uses: actions/setup-node@v4
         with:
           node-version-file: web/.nvmrc
@@ -40,10 +64,12 @@ jobs:
           cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
+        if: steps.node-check.outputs.exists == 'true'
         working-directory: web
         run: npm ci
 
       - name: Run npm audit
+        if: steps.node-check.outputs.exists == 'true'
         working-directory: web
         run: npm audit --audit-level=high
 
@@ -55,18 +81,39 @@ jobs:
       actions: read
       contents: read
     strategy:
+      fail-fast: false
       matrix:
         language: [go, javascript]
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check if language source exists
+        id: src-check
+        run: |
+          if [ "${{ matrix.language }}" = "go" ]; then
+            if find . -name "*.go" -not -path "./.git/*" | grep -q .; then
+              echo "exists=true" >> $GITHUB_OUTPUT
+            else
+              echo "exists=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            if [ -f "web/package.json" ] && [ -d "web/src" ]; then
+              echo "exists=true" >> $GITHUB_OUTPUT
+            else
+              echo "exists=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
       - name: Initialize CodeQL
+        if: steps.src-check.outputs.exists == 'true'
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
 
       - name: Autobuild
+        if: steps.src-check.outputs.exists == 'true'
         uses: github/codeql-action/autobuild@v3
 
       - name: Perform CodeQL analysis
+        if: steps.src-check.outputs.exists == 'true'
         uses: github/codeql-action/analyze@v3

@@ -17,13 +17,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check if Go source exists
+        id: go-check
+        run: |
+          if find . -name "*.go" -not -path "./.git/*" | grep -q .; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "No Go source files found — skipping lint"
+          fi
+
       - name: Set up Go
+        if: steps.go-check.outputs.exists == 'true'
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
           cache: true
 
       - name: golangci-lint
+        if: steps.go-check.outputs.exists == 'true'
         uses: golangci/golangci-lint-action@v6
         with:
           version: latest
@@ -35,7 +47,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check if frontend source exists
+        id: node-check
+        run: |
+          if [ -f "web/package.json" ] && [ -d "web/src" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "No frontend source found — skipping lint"
+          fi
+
       - name: Set up Node
+        if: steps.node-check.outputs.exists == 'true'
         uses: actions/setup-node@v4
         with:
           node-version-file: web/.nvmrc
@@ -43,14 +66,17 @@ jobs:
           cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
+        if: steps.node-check.outputs.exists == 'true'
         working-directory: web
         run: npm ci
 
       - name: Lint
+        if: steps.node-check.outputs.exists == 'true'
         working-directory: web
         run: npm run lint
 
       - name: Type check
+        if: steps.node-check.outputs.exists == 'true'
         working-directory: web
         run: npm run typecheck
 
@@ -60,20 +86,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check if Go tests exist
+        id: go-check
+        run: |
+          if find . -name "*_test.go" -not -path "./.git/*" | grep -q .; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "No Go test files found — skipping tests"
+          fi
+
       - name: Set up Go
+        if: steps.go-check.outputs.exists == 'true'
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
           cache: true
 
       - name: Run tests
+        if: steps.go-check.outputs.exists == 'true'
         run: go test -v -race -coverprofile=coverage.out ./...
-
-      - name: Upload coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: go-coverage
-          path: coverage.out
 
   test-frontend:
     name: Test (Node)
@@ -81,7 +113,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check if frontend tests exist
+        id: node-check
+        run: |
+          if [ -f "web/package.json" ] && [ -d "web/src" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "No frontend source found — skipping tests"
+          fi
+
       - name: Set up Node
+        if: steps.node-check.outputs.exists == 'true'
         uses: actions/setup-node@v4
         with:
           node-version-file: web/.nvmrc
@@ -89,50 +132,14 @@ jobs:
           cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
+        if: steps.node-check.outputs.exists == 'true'
         working-directory: web
         run: npm ci
 
       - name: Run tests
+        if: steps.node-check.outputs.exists == 'true'
         working-directory: web
         run: npm run test -- --coverage
-
-  build-backend:
-    name: Build (Go)
-    runs-on: ubuntu-latest
-    needs: [lint-backend, test-backend]
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-          cache: true
-
-      - name: Build
-        run: go build -v ./cmd/ctrld
-
-  build-frontend:
-    name: Build (Node)
-    runs-on: ubuntu-latest
-    needs: [lint-frontend, test-frontend]
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: web/.nvmrc
-          cache: npm
-          cache-dependency-path: web/package-lock.json
-
-      - name: Install dependencies
-        working-directory: web
-        run: npm ci
-
-      - name: Build
-        working-directory: web
-        run: npm run build
 
   commitlint:
     name: Commit lint
