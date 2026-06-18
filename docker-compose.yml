@@ -1,0 +1,34 @@
+name: ctrld-dev
+
+services:
+  backend:
+    build:
+      context: .
+      target: backend-builder
+    command: go run ./cmd/ctrld serve --config /etc/ctrld/config.yaml
+    ports:
+      - "8443:8443"
+    volumes:
+      - .:/app
+      - ctrld-data:/var/lib/ctrld
+    environment:
+      - CTRLD_ENV=development
+      - CTRLD_LOG_LEVEL=debug
+    depends_on:
+      - frontend
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app/web
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./web:/app/web
+      - web-modules:/app/web/node_modules
+    environment:
+      - NEXT_PUBLIC_API_URL=https://localhost:8443
+
+volumes:
+  ctrld-data:
+  web-modules:

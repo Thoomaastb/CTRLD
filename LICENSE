@@ -1,0 +1,190 @@
+CTRLD Non-Commercial License, Version 1.0
+
+Copyright (c) 2024–present, CTRLD Contributors
+All rights reserved.
+
+────────────────────────────────────────────────────────────────
+
+1. DEFINITIONS
+
+"Software" means the CTRLD server control panel software, including all source
+code, compiled binaries, documentation, configuration files, and associated
+materials made available under this License.
+
+"Licensor" means the copyright holders and contributors of the Software.
+
+"You" (or "Your") means the individual or legal entity exercising the rights
+granted by this License.
+
+"Non-Commercial Use" means use of the Software solely for personal,
+educational, research, or non-profit purposes, where no direct or indirect
+commercial advantage or monetary compensation is received in exchange for the
+use of the Software or any service derived from it.
+
+"Commercial Use" means any use of the Software that is primarily intended for
+or directed toward commercial advantage or monetary compensation, determined
+solely by the purpose of use and not by the size, headcount, or legal form of
+the entity. Commercial Use includes, without limitation: use by hosting
+providers to manage customer infrastructure; use as part of a paid managed
+service; use in a SaaS offering; use by agencies or freelancers to deliver paid
+services to third parties; or use by any for-profit entity in a production
+environment that serves the commercial purpose of that entity.
+
+"Attribution" means clearly displaying the name "CTRLD" and a visible,
+functional hyperlink to the official CTRLD website (https://ctrld.io or the
+then-current official URL as designated by the Licensor) in the user interface
+of any deployment, installation, or product derived from the Software.
+
+"Derivative Work" means any work that is based upon, incorporates, or modifies
+the Software.
+
+────────────────────────────────────────────────────────────────
+
+2. GRANT OF RIGHTS (NON-COMMERCIAL)
+
+Subject to the terms and conditions of this License, the Licensor hereby grants
+You a worldwide, royalty-free, non-exclusive, non-sublicensable license to:
+
+a) Use, copy, and install the Software for Non-Commercial Use;
+
+b) Study and modify the Software for Non-Commercial Use;
+
+c) Distribute verbatim copies of the Software, provided that You retain all
+   copyright notices, this License, and all Attribution requirements;
+
+d) Distribute Derivative Works for Non-Commercial Use, provided that You:
+   i.  make the source code of the Derivative Work available under this same
+       License;
+   ii. clearly state that the Derivative Work is based on CTRLD;
+   iii. retain all Attribution requirements as defined in Section 4.
+
+────────────────────────────────────────────────────────────────
+
+3. COMMERCIAL USE
+
+Any Commercial Use of the Software requires a separate written commercial
+license agreement with the Licensor.
+
+To obtain a commercial license, contact: license@ctrld.io
+
+Using the Software for Commercial Use without a valid commercial license is a
+breach of this License and may constitute copyright infringement.
+
+If You are unsure whether your use qualifies as Commercial Use, contact
+license@ctrld.io — we will clarify promptly and without obligation.
+
+────────────────────────────────────────────────────────────────
+
+4. ATTRIBUTION REQUIREMENTS
+
+For any deployment, installation, or publicly accessible interface of the
+Software or any Derivative Work, You must:
+
+a) Display the text "Powered by CTRLD" or "Built on CTRLD" in a visible
+   location within the user interface (e.g. footer, about page, or login
+   screen);
+
+b) Ensure the text described in (a) includes a functional hyperlink to the
+   official CTRLD website (https://ctrld.io or the then-current official URL).
+   The hyperlink must not use the rel="nofollow" attribute;
+
+c) Not remove, obscure, or alter any existing copyright notices, attribution
+   notices, or links to the CTRLD website contained in the Software;
+
+d) Not misrepresent the origin of the Software or claim that You are the
+   original author of the Software.
+
+The Attribution requirement applies regardless of whether the Software is used
+in its original form or as a Derivative Work.
+
+────────────────────────────────────────────────────────────────
+
+5. TRADEMARK AND BRANDING
+
+This License does not grant You any rights to use the name "CTRLD", the CTRLD
+logo, or any other trademarks of the Licensor, except as required for
+Attribution under Section 4.
+
+You may not use the CTRLD name or branding to endorse or promote products
+derived from this Software without prior written permission from the Licensor.
+
+────────────────────────────────────────────────────────────────
+
+6. SOURCE CODE AND MODIFICATIONS
+
+If You distribute a Derivative Work, You must:
+
+a) Make the complete corresponding source code available to all recipients, at
+   no additional charge;
+
+b) License the Derivative Work under this same License (CTRLD Non-Commercial
+   License v1.0) or a later version published by the Licensor;
+
+c) Include a prominent notice stating the date of modification and a
+   description of the changes made.
+
+────────────────────────────────────────────────────────────────
+
+7. CONTRIBUTIONS
+
+Any contribution intentionally submitted for inclusion in the Software by You
+shall be governed by the CTRLD Contributor License Agreement (CLA). By
+submitting a contribution, You represent that You have the right to submit it
+and that You agree to the terms of the CLA.
+
+────────────────────────────────────────────────────────────────
+
+8. NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+OR OTHER DEALINGS IN THE SOFTWARE.
+
+YOU ASSUME ALL RISKS ASSOCIATED WITH THE USE OF THIS SOFTWARE, INCLUDING BUT
+NOT LIMITED TO THE RISKS OF PROGRAM ERRORS, DAMAGE TO EQUIPMENT, LOSS OF DATA,
+OR SOFTWARE FAILURES.
+
+────────────────────────────────────────────────────────────────
+
+9. TERMINATION
+
+Your rights under this License will terminate automatically and immediately
+without notice if You:
+
+a) Breach any term of this License;
+b) Use the Software for Commercial Use without a valid commercial license;
+c) Fail to comply with the Attribution requirements of Section 4.
+
+Upon termination, You must cease all use and distribution of the Software and
+destroy all copies in Your possession. Sections 5, 6, 8, and 10 survive
+termination.
+
+────────────────────────────────────────────────────────────────
+
+10. GOVERNING LAW
+
+This License shall be governed by and construed in accordance with the laws of
+Germany, without regard to its conflict of law provisions. Any disputes arising
+from this License shall be subject to the exclusive jurisdiction of the courts
+of Germany.
+
+────────────────────────────────────────────────────────────────
+
+11. MISCELLANEOUS
+
+If any provision of this License is held to be unenforceable, such provision
+shall be modified to the minimum extent necessary to make it enforceable. The
+remaining provisions shall continue in full force and effect.
+
+The Licensor reserves the right to release future versions of this License. You
+may use the Software under this version or any later version published by the
+Licensor.
+
+────────────────────────────────────────────────────────────────
+
+End of CTRLD Non-Commercial License, Version 1.0

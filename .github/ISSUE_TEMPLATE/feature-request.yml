@@ -1,0 +1,49 @@
+name: Feature request
+description: Suggest a new feature or improvement
+title: "feat: "
+labels: [feature-request]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a feature! Please fill out the form below.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the problem or limitation you're experiencing.
+      placeholder: "When I try to ... I have to ... which is frustrating because ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: What would you like to see? How should it work?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any other solutions or workarounds you've tried or considered?
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Screenshots, mockups, links to similar implementations, or anything else relevant.
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: Target version
+      options:
+        - v1.x (monitoring, logs, services)
+        - v2.x (domains, SSL, Docker, multi-server)
+        - v3.x (FTP, web server, databases)
+        - v4.x+ (future)
+        - Not sure

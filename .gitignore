@@ -1,0 +1,55 @@
+# ── Go ──────────────────────────────────────────
+/ctrld
+/ctrld-*
+/dist/
+*.exe
+*.test
+*.prof
+coverage.out
+coverage.html
+VERSION
+
+# ── Node / Web ───────────────────────────────────
+web/node_modules/
+web/.next/
+web/out/
+web/.env
+web/.env.local
+web/.env.*.local
+
+# ── Environment & secrets ────────────────────────
+.env
+.env.*
+!.env.example
+config.yaml
+!config.example.yaml
+
+# ── Database ─────────────────────────────────────
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# ── Logs ─────────────────────────────────────────
+*.log
+/logs/
+
+# ── IDEs ─────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Release artifacts ────────────────────────────
+/release/
+*.tar.gz
+*.zip
+
+# ── Misc ─────────────────────────────────────────
+tmp/
+.tmp/
+node_modules/

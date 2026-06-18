@@ -1,0 +1,26 @@
+name: Discussion / Question
+description: Open-ended question, opinion, or general discussion
+title: "discussion: "
+labels: [discussion]
+body:
+  - type: input
+    id: topic
+    attributes:
+      label: Topic
+      placeholder: "e.g. Thoughts on supporting RHEL/CentOS"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What's the background? Why does this matter?
+    validations:
+      required: true
+
+  - type: textarea
+    id: thoughts
+    attributes:
+      label: Your thoughts
+      description: What's your take? What outcome are you hoping for?

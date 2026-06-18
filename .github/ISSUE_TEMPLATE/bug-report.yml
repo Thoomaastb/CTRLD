@@ -1,0 +1,77 @@
+name: Bug report
+description: Report a bug or unexpected behavior
+title: "fix: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please fill out the form as completely as possible.
+
+  - type: input
+    id: version
+    attributes:
+      label: CTRLD version
+      placeholder: "e.g. v0.3.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Debian 11
+        - Debian 12
+        - Ubuntu 22.04
+        - Ubuntu 24.04
+        - Other Linux
+    validations:
+      required: true
+
+  - type: input
+    id: arch
+    attributes:
+      label: Architecture
+      placeholder: "e.g. amd64, arm64"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. See error ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Paste relevant logs here. Remove any sensitive data (IPs, credentials).
+      render: shell
+
+  - type: checkboxes
+    id: security
+    attributes:
+      label: Security
+      options:
+        - label: This bug has security implications (I will also email security@ctrld.io)
