@@ -6,11 +6,11 @@
 
 A modern, security-first, self-hosted server control panel — built with Zero Trust architecture, Privileged Identity Management, and a UI you'll actually enjoy using.
 
-[![License](https://img.shields.io/badge/license-CTRLD%20Non--Commercial%20v1.0-7F77DD)](LICENSE)
-[![Version](https://img.shields.io/badge/version-v0.1.0--alpha-534AB7)](https://github.com/ctrld/ctrld/releases)
+[![License](https://img.shields.io/badge/license-CTRLD%20Non--Commercial%20v1.0-7F77DD)](https://github.com/Thoomaastb/CTRLD/blob/main/LICENSE)
+[![Version](https://img.shields.io/badge/version-pre--alpha-534AB7)](https://github.com/Thoomaastb/CTRLD/releases)
 [![Go](https://img.shields.io/badge/backend-Go-00ADD8)](https://go.dev)
 [![React](https://img.shields.io/badge/frontend-React%20%2F%20Next.js-61DAFB)](https://nextjs.org)
-[![Stars](https://img.shields.io/github/stars/ctrld/ctrld?style=flat&color=534AB7)](https://github.com/ctrld/ctrld/stargazers)
+[![Stars](https://img.shields.io/github/stars/Thoomaastb/CTRLD?style=flat&color=534AB7)](https://github.com/Thoomaastb/CTRLD/stargazers)
 
 [**Features**](#features) · [**Quick Install**](#quick-install) · [**Screenshots**](#screenshots) · [**Roadmap**](#roadmap) · [**Contributing**](#contributing) · [**License**](#license)
 
@@ -96,13 +96,13 @@ The installer will:
 
 ### Manual installation
 
-Download the latest binary from [Releases](https://github.com/ctrld/ctrld/releases) or run with Docker:
+Download the latest binary from [Releases](https://github.com/Thoomaastb/CTRLD/releases) or run with Docker:
 
 ```bash
 docker run -d \
   -p 8443:8443 \
   -v ctrld-data:/var/lib/ctrld \
-  ghcr.io/ctrld/ctrld:latest
+  ghcr.io/thoomaastb/ctrld:latest
 ```
 
 ---
@@ -126,7 +126,7 @@ docker run -d \
 | Version | Focus | Status |
 |---|---|---|
 | **v0.1.0** | Project setup, CI/CD, foundations | 🔧 In progress |
-| **v0.2.0** | Auth, 2FA/MFA, PIM, audit log | 📋 Planned |
+| **v0.2.0** | Auth, MFA (TOTP + Passkey + FIDO2), PIM, audit log | 📋 Planned |
 | **v0.3.0** | Dashboard, live monitoring | 📋 Planned |
 | **v0.4.0** | Log viewer, live tail | 📋 Planned |
 | **v0.5.0** | Service management | 📋 Planned |
@@ -135,7 +135,7 @@ docker run -d \
 | **v2.x** | Domains, SSL, Docker, OIDC/SSO | 🔭 Future |
 | **v3.x** | FTP, web server, databases, Hub-SSO | 🔭 Future |
 
-Full roadmap and backlog: [GitHub Projects](https://github.com/ctrld/ctrld/projects) · [Open issues](https://github.com/ctrld/ctrld/issues)
+Full roadmap and backlog: [Open issues](https://github.com/Thoomaastb/CTRLD/issues) · [Discussions](https://github.com/Thoomaastb/CTRLD/discussions)
 
 ---
 
@@ -159,8 +159,8 @@ CTRLD is in early development and feedback is the most valuable contribution rig
 **Ways to help:**
 
 - ⭐ Star the repo — it helps more people find the project
-- 🐛 [Open an issue](https://github.com/ctrld/ctrld/issues/new/choose) — bug reports, feature requests, questions
-- 💬 [Join a discussion](https://github.com/ctrld/ctrld/discussions) — share your use case, vote on features, ask questions
+- 🐛 [Open an issue](https://github.com/Thoomaastb/CTRLD/issues/new/choose) — bug reports, feature requests, questions
+- 💬 [Join a discussion](https://github.com/Thoomaastb/CTRLD/discussions) — share your use case, vote on features, ask questions
 - 🔧 Submit a PR — see [CONTRIBUTING.md](CONTRIBUTING.md) for the process
 
 All contributors must sign the [CTRLD Contributor License Agreement (CLA)](CONTRIBUTING.md#cla) before a PR can be merged.
@@ -185,7 +185,7 @@ CTRLD is released under the **CTRLD Non-Commercial License v1.0**.
 
 **Attribution required:** All deployments must display "Powered by CTRLD" with a functional link to [ctrld.io](https://ctrld.io) (no `rel="nofollow"`).
 
-Commercial licenses: [license@ctrld.io](mailto:license@ctrld.io) · Full license text: [LICENSE](LICENSE)
+Commercial licenses: [license@ctrld.io](mailto:license@ctrld.io) · Full license text: [LICENSE](https://github.com/Thoomaastb/CTRLD/blob/main/LICENSE)
 
 ---
 
