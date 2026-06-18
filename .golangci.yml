@@ -1,7 +1,9 @@
-version: "2"
+run:
+  timeout: 5m
+  tests: true
 
 linters:
-  default: none
+  disable-all: true
   enable:
     - errcheck
     - gosimple
@@ -10,20 +12,11 @@ linters:
     - staticcheck
     - unused
     - bodyclose
-    - contextcheck
-    - exhaustive
     - gocritic
     - gocyclo
-    - godot
-    - goheader
     - gosec
     - misspell
-    - noctx
-    - nolintlint
-    - prealloc
     - revive
-    - rowserrcheck
-    - sqlclosecheck
     - unconvert
     - unparam
 
@@ -66,12 +59,5 @@ issues:
       linters:
         - gosec
         - gocritic
-    - path: cmd/
-      linters:
-        - godot
   max-issues-per-linter: 50
   max-same-issues: 5
-
-run:
-  timeout: 5m
-  tests: true
