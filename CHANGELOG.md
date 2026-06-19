@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.10.0](https://github.com/Thoomaastb/CTRLD/compare/v0.9.0...v0.10.0) (2026-06-19)
+
+### Features
+
+* **ui:** add router wiring, login page, MFA flow and setup wizard ([d233ed9](https://github.com/Thoomaastb/CTRLD/commit/d233ed90acf2928e11515550ce416d6eff7c5782))
+
 ## [0.9.0](https://github.com/Thoomaastb/CTRLD/compare/v0.8.0...v0.9.0) (2026-06-19)
 
 ### Features
