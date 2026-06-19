@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.10.1](https://github.com/Thoomaastb/CTRLD/compare/v0.10.0...v0.10.1) (2026-06-19)
+
+### Bug Fixes
+
+* **server:** move test config to internal helper to resolve module lookup issue ([4b76f16](https://github.com/Thoomaastb/CTRLD/commit/4b76f16432cbcb0db66bc49a7d1882aa0a474320))
+
 ## [0.10.0](https://github.com/Thoomaastb/CTRLD/compare/v0.9.0...v0.10.0) (2026-06-19)
 
 ### Features
