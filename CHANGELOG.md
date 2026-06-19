@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.3.1](https://github.com/Thoomaastb/CTRLD/compare/v0.3.0...v0.3.1) (2026-06-19)
+
+### Bug Fixes
+
+* **docker:** update to Node 24, Go 1.26, enable CGO for sqlite3 ([e4c90f1](https://github.com/Thoomaastb/CTRLD/commit/e4c90f16493372988e0ec5ea9ea05576a63e45d2))
+
 ## [0.3.0](https://github.com/Thoomaastb/CTRLD/compare/v0.2.0...v0.3.0) (2026-06-19)
 
 ### Features
