@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.6.0](https://github.com/Thoomaastb/CTRLD/compare/v0.5.0...v0.6.0) (2026-06-19)
+
+### Features
+
+* **auth:** add TOTP MFA with QR code setup, verification and backup codes ([dd68aed](https://github.com/Thoomaastb/CTRLD/commit/dd68aed173af2300ce6e8c7b12e96548708f68f4))
+
 ## [0.5.0](https://github.com/Thoomaastb/CTRLD/compare/v0.4.0...v0.5.0) (2026-06-19)
 
 ### Features
