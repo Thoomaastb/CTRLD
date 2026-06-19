@@ -7,6 +7,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/uuid v1.6.0
 	github.com/mattn/go-sqlite3 v1.14.28
+	github.com/pquerna/otp v1.4.0
 	github.com/pressly/goose/v3 v3.24.3
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/viper v1.20.1
@@ -14,6 +15,7 @@ require (
 )
 
 require (
+	github.com/boombuler/barcode v1.0.2 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
