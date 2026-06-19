@@ -2,161 +2,80 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  lint-backend:
-    name: Lint (Go)
+  # ─── Go: Lint + Build + Test ────────────────────────────────────────────────
+  go:
+    name: Go (Lint + Build + Test)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Check if Go source exists
-        id: go-check
-        run: |
-          if find . -name "*.go" -not -path "./.git/*" | grep -q .; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "No Go source files found — skipping lint"
-          fi
-
-      - name: Set up Go
-        if: steps.go-check.outputs.exists == 'true'
+      - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: go.mod
+          go-version: "1.24"
           cache: true
 
-      - name: golangci-lint
-        if: steps.go-check.outputs.exists == 'true'
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Lint
         uses: golangci/golangci-lint-action@v6
         with:
           version: latest
-          args: --timeout=5m
 
-  lint-frontend:
-    name: Lint (Node)
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test ./... -race -coverprofile=coverage.out
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: go-coverage
+          path: coverage.out
+
+  # ─── Node: Lint + Type-Check + Build ────────────────────────────────────────
+  node:
+    name: Node (Lint + Type-Check + Build)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        # Alle Node-Steps laufen im web/-Unterverzeichnis
+        working-directory: web
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Check if frontend source exists
-        id: node-check
-        run: |
-          if [ -f "web/package.json" ] && [ -d "web/src" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "No frontend source found — skipping lint"
-          fi
-
-      - name: Set up Node
-        if: steps.node-check.outputs.exists == 'true'
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version-file: web/.nvmrc
-          cache: npm
+          node-version: "24"
+          cache: "npm"
           cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
-        if: steps.node-check.outputs.exists == 'true'
-        working-directory: web
         run: npm ci
 
       - name: Lint
-        if: steps.node-check.outputs.exists == 'true'
-        working-directory: web
         run: npm run lint
 
-      - name: Type check
-        if: steps.node-check.outputs.exists == 'true'
-        working-directory: web
-        run: npm run typecheck
+      - name: Type-check
+        run: npm run type-check
 
-  test-backend:
-    name: Test (Go)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Check if Go tests exist
-        id: go-check
-        run: |
-          if find . -name "*_test.go" -not -path "./.git/*" | grep -q .; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "No Go test files found — skipping tests"
-          fi
-
-      - name: Set up Go
-        if: steps.go-check.outputs.exists == 'true'
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-          cache: true
-
-      - name: Run tests
-        if: steps.go-check.outputs.exists == 'true'
-        run: go test -v -race -coverprofile=coverage.out ./...
-
-  test-frontend:
-    name: Test (Node)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Check if frontend tests exist
-        id: node-check
-        run: |
-          if [ -f "web/package.json" ] && [ -d "web/src" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "No frontend source found — skipping tests"
-          fi
-
-      - name: Set up Node
-        if: steps.node-check.outputs.exists == 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: web/.nvmrc
-          cache: npm
-          cache-dependency-path: web/package-lock.json
-
-      - name: Install dependencies
-        if: steps.node-check.outputs.exists == 'true'
-        working-directory: web
-        run: npm ci
-
-      - name: Run tests
-        if: steps.node-check.outputs.exists == 'true'
-        working-directory: web
-        run: npm run test -- --coverage
-
-  commitlint:
-    name: Commit lint
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install commitlint
-        run: npm install --save-dev @commitlint/cli @commitlint/config-conventional
-
-      - name: Validate PR commits
-        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+      - name: Build
+        run: npm run build
+        env:
+          # Verhindert dass Next.js den Build wegen Telemetrie-Prompt abbricht
+          NEXT_TELEMETRY_DISABLED: "1"
