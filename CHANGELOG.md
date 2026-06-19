@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.7.0](https://github.com/Thoomaastb/CTRLD/compare/v0.6.0...v0.7.0) (2026-06-19)
+
+### Features
+
+* **pim:** add PIM engine, audit log service and break-glass support ([15ecba9](https://github.com/Thoomaastb/CTRLD/commit/15ecba9377fe95649d8da5d366e44f813f6c450a))
+
 ## [0.6.0](https://github.com/Thoomaastb/CTRLD/compare/v0.5.0...v0.6.0) (2026-06-19)
 
 ### Features
