@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.1.1](https://github.com/Thoomaastb/CTRLD/compare/v0.1.0...v0.1.1) (2026-06-19)
+
+### Bug Fixes
+
+* **ci:** set working-directory for Node jobs and add test placeholder ([a29ea55](https://github.com/Thoomaastb/CTRLD/commit/a29ea55524dc38ec8f224705f717a57efd9016bb))
+
 ## [0.1.0](https://github.com/Thoomaastb/CTRLD/compare/v0.0.0...v0.1.0) (2026-06-19)
 
 ### Features
