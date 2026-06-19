@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.3.0](https://github.com/Thoomaastb/CTRLD/compare/v0.2.0...v0.3.0) (2026-06-19)
+
+### Features
+
+* **api:** add Go project structure with health endpoint and config loading ([b0eb1ab](https://github.com/Thoomaastb/CTRLD/commit/b0eb1abfd90169c6ffaf25dd62313d30a03d0ceb))
+
 ## [0.2.0](https://github.com/Thoomaastb/CTRLD/compare/v0.1.2...v0.2.0) (2026-06-19)
 
 ### Features
