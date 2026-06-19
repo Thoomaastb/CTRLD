@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.8.0](https://github.com/Thoomaastb/CTRLD/compare/v0.7.0...v0.8.0) (2026-06-19)
+
+### Features
+
+* **setup:** add setup wizard, user management and last-admin protection ([ffa8b43](https://github.com/Thoomaastb/CTRLD/commit/ffa8b43b205a5e918d13d031fce7f99159b18978))
+
 ## [0.7.0](https://github.com/Thoomaastb/CTRLD/compare/v0.6.0...v0.7.0) (2026-06-19)
 
 ### Features
