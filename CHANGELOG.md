@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.4.0](https://github.com/Thoomaastb/CTRLD/compare/v0.3.1...v0.4.0) (2026-06-19)
+
+### Features
+
+* **auth:** add Argon2id password hashing, JWT tokens, rate limiting and auth middleware ([5ab1564](https://github.com/Thoomaastb/CTRLD/commit/5ab15644bdc42dd592b7d296e50252fcf3812f0d))
+
 ## [0.3.1](https://github.com/Thoomaastb/CTRLD/compare/v0.3.0...v0.3.1) (2026-06-19)
 
 ### Bug Fixes
