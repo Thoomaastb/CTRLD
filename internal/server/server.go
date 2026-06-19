@@ -11,58 +11,66 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog"
 
-	"github.com/Thoomaastb/CTRLD/internal/audit"
-	"github.com/Thoomaastb/CTRLD/internal/auth"
-	authservice "github.com/Thoomaastb/CTRLD/internal/auth/service"
-	"github.com/Thoomaastb/CTRLD/internal/config"
-	database "github.com/Thoomaastb/CTRLD/internal/db"
-	"github.com/Thoomaastb/CTRLD/internal/handler"
-	"github.com/Thoomaastb/CTRLD/internal/health"
-	mfapkg "github.com/Thoomaastb/CTRLD/internal/mfa"
-	authmw "github.com/Thoomaastb/CTRLD/internal/middleware"
-	"github.com/Thoomaastb/CTRLD/internal/pim"
-	"github.com/Thoomaastb/CTRLD/internal/setup"
-	"github.com/Thoomaastb/CTRLD/internal/users"
-	"github.com/Thoomaastb/CTRLD/pkg/version"
+	"github.com/Thoomaastab/CTRLD/internal/audit"
+	"github.com/Thoomaastab/CTRLD/internal/auth"
+	authservice "github.com/Thoomaastab/CTRLD/internal/auth/service"
+	"github.com/Thoomaastab/CTRLD/internal/config"
+	database "github.com/Thoomaastab/CTRLD/internal/db"
+	"github.com/Thoomaastab/CTRLD/internal/handler"
+	"github.com/Thoomaastab/CTRLD/internal/health"
+	"github.com/Thoomaastab/CTRLD/internal/metrics"
+	mfapkg "github.com/Thoomaastab/CTRLD/internal/mfa"
+	authmw "github.com/Thoomaastab/CTRLD/internal/middleware"
+	"github.com/Thoomaastab/CTRLD/internal/pim"
+	"github.com/Thoomaastab/CTRLD/internal/setup"
+	"github.com/Thoomaastab/CTRLD/internal/users"
+	wshub "github.com/Thoomaastab/CTRLD/internal/websocket"
+	"github.com/Thoomaastab/CTRLD/pkg/version"
 )
 
 // Server kapselt den HTTP-Server und alle Services.
 type Server struct {
-	cfg    *config.Config
-	log    zerolog.Logger
-	httpSv *http.Server
-	db     *database.DB
+	cfg        *config.Config
+	log        zerolog.Logger
+	httpSv     *http.Server
+	db         *database.DB
+	metricsSvc *metrics.Service
+	wsHub      *wshub.Hub
 }
 
 // New erstellt einen vollständig verdrahteten Server.
 func New(cfg *config.Config, db *database.DB, log zerolog.Logger) *Server {
 	s := &Server{cfg: cfg, log: log, db: db}
 
-	// ── Services instanziieren ────────────────────────────────────────────────
 	tokenCfg := auth.TokenConfig{
 		Secret:         []byte(cfg.Security.JWTSecret),
 		AccessTTLMin:   cfg.Security.JWTAccessTTLMin,
 		RefreshTTLDays: cfg.Security.JWTRefreshTTLDay,
 	}
 
-	authSvc   := authservice.New(db, tokenCfg, log)
-	mfaSvc    := mfapkg.NewService(db, tokenCfg, log)
-	pimSvc    := pim.New(db, log)
-	auditSvc  := audit.New(db, log)
-	setupSvc  := setup.New(db, log)
-	usersSvc  := users.New(db, log)
+	// ── Services ─────────────────────────────────────────────────────────────
+	authSvc     := authservice.New(db, tokenCfg, log)
+	mfaSvc      := mfapkg.NewService(db, tokenCfg, log)
+	pimSvc      := pim.New(db, log)
+	auditSvc    := audit.New(db, log)
+	setupSvc    := setup.New(db, log)
+	usersSvc    := users.New(db, log)
+	metricsSvc  := metrics.NewService(log)
+	s.metricsSvc = metricsSvc
 
-	// ── Auth-Middleware ───────────────────────────────────────────────────────
-	authn := authmw.NewAuthenticator([]byte(cfg.Security.JWTSecret))
+	// WebSocket Hub
+	wsHub := wshub.NewHub(metricsSvc, []byte(cfg.Security.JWTSecret), log)
+	s.wsHub = wsHub
 
-	// ── Handler instanziieren ─────────────────────────────────────────────────
-	authHandler  := handler.NewAuthHandler(authSvc, log)
-	mfaHandler   := handler.NewMFAHandler(mfaSvc, authSvc, log)
-	pimHandler   := handler.NewPIMHandler(pimSvc, auditSvc, log)
-	setupHandler := handler.NewSetupHandler(setupSvc, usersSvc, log)
+	// ── Handler ───────────────────────────────────────────────────────────────
+	authn          := authmw.NewAuthenticator([]byte(cfg.Security.JWTSecret))
+	authHandler    := handler.NewAuthHandler(authSvc, log)
+	mfaHandler     := handler.NewMFAHandler(mfaSvc, authSvc, log)
+	pimHandler     := handler.NewPIMHandler(pimSvc, auditSvc, log)
+	setupHandler   := handler.NewSetupHandler(setupSvc, usersSvc, log)
+	metricsHandler := handler.NewMetricsHandler(metricsSvc, pimSvc, log)
 
-	// ── Router aufbauen ───────────────────────────────────────────────────────
-	router := s.buildRouter(authn, authHandler, mfaHandler, pimHandler, setupHandler, setupSvc)
+	router := s.buildRouter(authn, authHandler, mfaHandler, pimHandler, setupHandler, metricsHandler, setupSvc, wsHub)
 
 	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
 	s.httpSv = &http.Server{
@@ -83,60 +91,49 @@ func (s *Server) buildRouter(
 	mfaHandler *handler.MFAHandler,
 	pimHandler *handler.PIMHandler,
 	setupHandler *handler.SetupHandler,
+	metricsHandler *handler.MetricsHandler,
 	setupSvc *setup.Service,
+	wsHub *wshub.Hub,
 ) *chi.Mux {
 	r := chi.NewRouter()
 
-	// ── Globale Middleware ────────────────────────────────────────────────────
 	r.Use(middleware.RequestID)
 	r.Use(s.loggerMiddleware())
 	r.Use(middleware.Recoverer)
 	r.Use(securityHeaders)
 
-	// ── Health-Endpoint (immer erreichbar) ───────────────────────────────────
+	// Health (immer erreichbar)
 	r.Get("/api/v1/health", health.Handler)
 
-	// ── API v1 ───────────────────────────────────────────────────────────────
+	// WebSocket (Auth via Query-Param)
+	r.Get("/ws/metrics", wsHub.ServeMetrics)
+
 	r.Route("/api/v1", func(r chi.Router) {
-		// Setup-Wizard-Guard: Wenn Setup noch nicht abgeschlossen,
-		// sind nur /setup/* und /auth/login erreichbar
 		r.Use(s.setupGuard(setupSvc))
 
-		// Auth-Endpunkte
 		authHandler.RegisterRoutes(r, authn)
-
-		// MFA-Endpunkte
 		mfaHandler.RegisterRoutes(r, authn)
-
-		// Setup-Wizard + User-Management
 		setupHandler.RegisterRoutes(r, authn)
-
-		// PIM + Audit
 		pimHandler.RegisterRoutes(r, authn)
+		metricsHandler.RegisterRoutes(r, authn)
 	})
 
 	return r
 }
 
-// setupGuard blockiert API-Zugriff wenn Setup noch nicht abgeschlossen.
-// Ausnahmen: /setup/*, /auth/login, /auth/refresh, /health
 func (s *Server) setupGuard(setupSvc *setup.Service) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Setup abgeschlossen → alles erlaubt
 			if setupSvc.IsCompleted(r.Context()) {
 				next.ServeHTTP(w, r)
 				return
 			}
-
-			// Erlaubte Pfade auch ohne abgeschlossenen Setup
 			allowed := []string{
 				"/api/v1/setup/",
 				"/api/v1/auth/login",
 				"/api/v1/auth/refresh",
 				"/api/v1/health",
 			}
-
 			path := r.URL.Path
 			for _, prefix := range allowed {
 				if len(path) >= len(prefix) && path[:len(prefix)] == prefix {
@@ -144,7 +141,6 @@ func (s *Server) setupGuard(setupSvc *setup.Service) func(http.Handler) http.Han
 					return
 				}
 			}
-
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusServiceUnavailable)
 			_, _ = w.Write([]byte(`{"error":"setup nicht abgeschlossen","code":"SETUP_REQUIRED","setup_url":"/api/v1/setup/status"}`))
@@ -152,7 +148,6 @@ func (s *Server) setupGuard(setupSvc *setup.Service) func(http.Handler) http.Han
 	}
 }
 
-// securityHeaders setzt HTTP Security-Headers auf alle Antworten.
 func securityHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		h := w.Header()
@@ -167,13 +162,11 @@ func securityHeaders(next http.Handler) http.Handler {
 	})
 }
 
-// loggerMiddleware erstellt einen zerolog-basierten Request-Logger.
 func (s *Server) loggerMiddleware() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
 			ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
-
 			defer func() {
 				s.log.Info().
 					Str("method", r.Method).
@@ -181,11 +174,9 @@ func (s *Server) loggerMiddleware() func(http.Handler) http.Handler {
 					Str("remote_ip", realIP(r)).
 					Str("request_id", middleware.GetReqID(r.Context())).
 					Int("status", ww.Status()).
-					Int("bytes", ww.BytesWritten()).
 					Dur("latency", time.Since(start)).
 					Msg("request")
 			}()
-
 			next.ServeHTTP(ww, r)
 		})
 	}
@@ -207,14 +198,19 @@ func (s *Server) Handler() http.Handler {
 	return s.httpSv.Handler
 }
 
-// Start startet den HTTP-Server.
+// Start startet den HTTP-Server + Metrics-Collection + WebSocket-Hub.
 func (s *Server) Start() error {
-	addr := s.httpSv.Addr
+	ctx, cancel := context.WithCancel(context.Background())
 	s.log.Info().
-		Str("addr", addr).
+		Str("addr", s.httpSv.Addr).
 		Str("version", version.Version).
-		Bool("tls", s.cfg.Server.TLSCertFile != "").
 		Msg("CTRLD server startet")
+
+	// Metrics-Collection starten
+	go s.metricsSvc.Start(ctx)
+
+	// WebSocket-Hub starten
+	go s.wsHub.Run(ctx)
 
 	var err error
 	if s.cfg.Server.TLSCertFile != "" && s.cfg.Server.TLSKeyFile != "" {
@@ -223,6 +219,8 @@ func (s *Server) Start() error {
 		s.log.Warn().Msg("TLS nicht konfiguriert — HTTP only (nur für development)")
 		err = s.httpSv.ListenAndServe()
 	}
+
+	cancel()
 
 	if err != nil && err != http.ErrServerClosed {
 		return fmt.Errorf("server: fehler: %w", err)
