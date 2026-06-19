@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.1.2](https://github.com/Thoomaastb/CTRLD/compare/v0.1.1...v0.1.2) (2026-06-19)
+
+### Bug Fixes
+
+* **ui:** add --dir src flag to next lint to prevent path misparse ([dfbd0c0](https://github.com/Thoomaastb/CTRLD/commit/dfbd0c074b3daca0ecf8437c03833f7ccf8f304f))
+
 ## [0.1.1](https://github.com/Thoomaastb/CTRLD/compare/v0.1.0...v0.1.1) (2026-06-19)
 
 ### Bug Fixes
