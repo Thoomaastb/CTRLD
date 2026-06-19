@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.1.0](https://github.com/Thoomaastb/CTRLD/compare/v0.0.0...v0.1.0) (2026-06-19)
+
+### Features
+
+* **ui:** add Next.js frontend structure with design system and API client ([a989d6c](https://github.com/Thoomaastb/CTRLD/commit/a989d6cd490a5e0d5b15ceed92d1a0b19464d196))
+
 ## 1.0.0 (2026-06-18)
 
 ### Bug Fixes
