@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.2.0](https://github.com/Thoomaastb/CTRLD/compare/v0.1.2...v0.2.0) (2026-06-19)
+
+### Features
+
+* **db:** add SQLite schema, goose migrations and sqlc query definitions ([9e54230](https://github.com/Thoomaastb/CTRLD/commit/9e54230a6593816853d5492c5056ffc1b0e86034))
+
 ## [0.1.2](https://github.com/Thoomaastb/CTRLD/compare/v0.1.1...v0.1.2) (2026-06-19)
 
 ### Bug Fixes
