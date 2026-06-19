@@ -1,65 +1,32 @@
-# CTRLD Configuration — Example
-# Copy to config.yaml and adjust to your environment.
-# Never commit config.yaml — it's in .gitignore.
+# CTRLD Konfiguration
+# Kopiere diese Datei nach /etc/ctrld/config.yaml und passe sie an.
+# Alle Werte können auch als Umgebungsvariablen gesetzt werden: CTRLD_<KEY>
+# Beispiel: CTRLD_SECURITY_JWT_SECRET=mein-secret
 
 server:
-  # Port CTRLD listens on (HTTPS)
+  host: "0.0.0.0"
   port: 8443
+  # TLS-Zertifikat (empfohlen für Produktion)
+  # tls_cert_file: "/etc/ctrld/tls/cert.pem"
+  # tls_key_file: "/etc/ctrld/tls/key.pem"
+  read_timeout_sec: 10
+  write_timeout_sec: 30
+  idle_timeout_sec: 120
 
-  # TLS configuration
-  tls:
-    # Path to TLS certificate (PEM). Leave empty to use auto-generated self-signed cert.
-    cert_file: ""
-    # Path to TLS private key (PEM). Leave empty to use auto-generated self-signed cert.
-    key_file: ""
+log:
+  level: "info"       # trace, debug, info, warn, error
+  format: "json"      # json (Produktion) oder pretty (Entwicklung)
 
-auth:
-  # Session timeout in minutes (default: 30)
-  session_timeout_minutes: 30
-
-  # Maximum concurrent sessions per user (default: 5, 0 = unlimited)
-  max_sessions_per_user: 5
-
-  # Bind session to client IP — invalidates session on IP change (default: true)
-  ip_binding: true
-
-pim:
-  # Maximum PIM session duration in minutes (default: 60)
-  max_duration_minutes: 60
-
-  # Minimum reason length in characters (default: 10)
-  min_reason_length: 10
-
-  # Require MFA re-authentication for every PIM activation (default: true, do not disable)
-  require_mfa: true
+security:
+  # JWT-Secret: ZWINGEND ERFORDERLICH — min. 32 zufällige Zeichen
+  # Generieren mit: openssl rand -hex 32
+  jwt_secret: "HIER-ZUFAELLIGES-SECRET-EINSETZEN-MIN-32-ZEICHEN"
+  jwt_access_ttl_min: 15    # Access Token Gültigkeit (Minuten)
+  jwt_refresh_ttl_day: 7    # Refresh Token Gültigkeit (Tage)
+  # Argon2id Parameter (OWASP-Empfehlung — nur für Experten ändern)
+  argon_memory: 65536       # 64 MB
+  argon_iterations: 3
+  argon_parallelism: 2
 
 database:
-  # Path to SQLite database file
-  path: /var/lib/ctrld/ctrld.db
-
-logging:
-  # Log level: debug, info, warn, error (default: info)
-  level: info
-
-  # Log format: json, text (default: json)
-  format: json
-
-alerts:
-  # CPU usage threshold in percent (default: 90)
-  cpu_threshold: 90
-
-  # RAM usage threshold in percent (default: 85)
-  ram_threshold: 85
-
-  # Disk usage threshold in percent (default: 90)
-  disk_threshold: 90
-
-  # SMTP configuration for email alerts (optional)
-  smtp:
-    enabled: false
-    host: ""
-    port: 587
-    username: ""
-    password: ""
-    from: ""
-    to: ""
+  path: "/var/lib/ctrld/ctrld.db"

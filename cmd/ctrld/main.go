@@ -12,39 +12,45 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/Thoomaastb/CTRLD/internal/config"
+	database "github.com/Thoomaastb/CTRLD/internal/db"
 	"github.com/Thoomaastb/CTRLD/internal/server"
 	"github.com/Thoomaastb/CTRLD/pkg/version"
 )
 
 func main() {
-	// --- Flags ---
 	cfgFile := flag.String("config", "", "Pfad zur Konfigurationsdatei (optional)")
 	flag.Parse()
 
-	// --- Konfiguration laden ---
+	// Konfiguration laden
 	cfg, err := config.Load(*cfgFile)
 	if err != nil {
-		// Vor Logger-Setup: Fallback auf stderr
 		log.Fatal().Err(err).Msg("konfiguration konnte nicht geladen werden")
 	}
 
-	// --- Logger initialisieren ---
+	// Logger initialisieren
 	logger := buildLogger(cfg)
 	logger.Info().
 		Str("version", version.Version).
 		Str("log_level", cfg.Log.Level).
 		Msg("CTRLD startet")
 
-	// --- Server erstellen ---
-	srv := server.New(cfg, logger)
+	// Datenbank öffnen + Migrations ausführen
+	db, err := database.Open(cfg.Database.Path, logger)
+	if err != nil {
+		logger.Fatal().Err(err).Str("path", cfg.Database.Path).Msg("datenbank konnte nicht geöffnet werden")
+	}
+	defer db.Close()
 
-	// --- Server in Goroutine starten ---
+	// Server mit allen Services erstellen
+	srv := server.New(cfg, db, logger)
+
+	// Server in Goroutine starten
 	serverErr := make(chan error, 1)
 	go func() {
 		serverErr <- srv.Start()
 	}()
 
-	// --- Shutdown-Signal abfangen (SIGINT, SIGTERM) ---
+	// Shutdown-Signal abfangen
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
@@ -58,7 +64,7 @@ func main() {
 		}
 	}
 
-	// --- Graceful Shutdown (30s Timeout) ---
+	// Graceful Shutdown
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
@@ -70,21 +76,17 @@ func main() {
 	logger.Info().Msg("CTRLD beendet")
 }
 
-// buildLogger erstellt einen zerolog.Logger basierend auf der Konfiguration.
 func buildLogger(cfg *config.Config) zerolog.Logger {
-	// Log-Level parsen
 	level, err := zerolog.ParseLevel(cfg.Log.Level)
 	if err != nil {
 		level = zerolog.InfoLevel
 	}
 	zerolog.SetGlobalLevel(level)
 
-	// Format: pretty (Dev) oder JSON (Prod)
 	if cfg.Log.Format == "pretty" {
 		return log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
 	}
 
-	// JSON-Output mit Timestamp
 	zerolog.TimeFieldFormat = time.RFC3339
 	return zerolog.New(os.Stderr).With().Timestamp().Logger()
 }

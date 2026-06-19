@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 
 /**
- * Root-Route: leitet direkt zum Dashboard weiter.
- * Auth-Check erfolgt im Middleware (kommt mit US-001).
+ * Root-Route: leitet zum Login weiter.
+ * Auth-Middleware prüft ob Setup nötig ist (kommt in nächster Iteration).
  */
 export default function RootPage() {
-  redirect("/dashboard");
+  redirect("/login");
 }
