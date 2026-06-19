@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.5.0](https://github.com/Thoomaastb/CTRLD/compare/v0.4.0...v0.5.0) (2026-06-19)
+
+### Features
+
+* **auth:** add login endpoint, session management and refresh token rotation ([a96006e](https://github.com/Thoomaastb/CTRLD/commit/a96006e166152d6ad1245628dfb005ab4fc8f70a))
+
 ## [0.4.0](https://github.com/Thoomaastb/CTRLD/compare/v0.3.1...v0.4.0) (2026-06-19)
 
 ### Features
