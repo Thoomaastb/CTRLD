@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+/* ─── CTRLD Design-System ─────────────────────────────────────────────────── */
+
+:root {
+  /* Backgrounds */
+  --bg:         #0D1117;
+  --surface:    #161B22;
+
+  /* Borders */
+  --border:     #30363D;
+  --border-sub: #21262D;
+
+  /* Brand — Lila (PIM + Primary) */
+  --brand:      #534AB7;
+  --brand-l:    #7F77DD;
+  --brand-bg:   #26215C;
+  --brand-t:    #AFA9EC;
+
+  /* Status */
+  --green:      #3FB950;
+  --yellow:     #D29922;
+  --red:        #F85149;
+
+  /* Text */
+  --text:       #E6EDF3;
+  --muted:      #8B949E;
+  --dim:        #444441;
+
+  /* Spacing-Basis */
+  --radius:     10px;
+  --sidebar-w:  52px;
+}
+
+/* ─── Reset & Base ────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: "Inter", "Geist", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Monospace (Logs, Timer, Code) ──────────────────────────────────────── */
+
+code,
+kbd,
+samp,
+pre,
+.mono {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, monospace;
+  font-size: 0.875em;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* ─── Focus ───────────────────────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--brand-l);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Reduced Motion ──────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
