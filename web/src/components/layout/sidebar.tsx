@@ -8,26 +8,25 @@ import {
   ScrollText,
   Settings2,
   Users,
-  LogOut,
   Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
-import { useLogout, useRole } from "@/lib/hooks/use-auth";
+import { useRole } from "@/lib/hooks/use-auth";
 
 const navItems = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/monitoring", icon: Activity, label: "Monitoring" },
-  { href: "/logs", icon: ScrollText, label: "Logs" },
-  { href: "/services", icon: Settings2, label: "Services" },
+  { href: "/dashboard",  icon: LayoutDashboard, label: "Dashboard"  },
+  { href: "/monitoring", icon: Activity,         label: "Monitoring" },
+  { href: "/logs",       icon: ScrollText,       label: "Logs"       },
+  { href: "/services",   icon: Settings2,        label: "Services"   },
 ];
 
 const adminItems = [
-  { href: "/users", icon: Users, label: "Benutzer" },
+  { href: "/users", icon: Users,  label: "Benutzer"  },
+  { href: "/audit", icon: Shield, label: "Audit-Log" },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
-  const logout = useLogout();
   const role = useRole();
   const isAdmin = role === "admin";
 
@@ -47,55 +46,34 @@ export function Sidebar() {
         </svg>
       </Link>
 
-      <div className="sidebar-divider" />
+      <div className="sidebar-sep" />
 
-      {/* Navigation */}
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" aria-label="Hauptnavigation">
         {navItems.map(({ href, icon: Icon, label }) => (
           <SidebarItem
             key={href}
             href={href}
             icon={Icon}
             label={label}
-            active={pathname.startsWith(href)}
+            active={pathname === href || pathname.startsWith(href + "/")}
           />
         ))}
 
         {isAdmin && (
           <>
-            <div className="sidebar-divider sidebar-divider--mid" />
+            <div className="sidebar-sep sidebar-sep--mid" />
             {adminItems.map(({ href, icon: Icon, label }) => (
               <SidebarItem
                 key={href}
                 href={href}
                 icon={Icon}
                 label={label}
-                active={pathname.startsWith(href)}
+                active={pathname === href || pathname.startsWith(href + "/")}
               />
             ))}
           </>
         )}
       </nav>
-
-      {/* Bottom: Audit + Logout */}
-      <div className="sidebar-bottom">
-        {isAdmin && (
-          <SidebarItem
-            href="/audit"
-            icon={Shield}
-            label="Audit-Log"
-            active={pathname.startsWith("/audit")}
-          />
-        )}
-        <button
-          className="sidebar-item sidebar-item--logout"
-          onClick={() => logout.mutate()}
-          title="Abmelden"
-          aria-label="Abmelden"
-        >
-          <LogOut size={18} />
-        </button>
-      </div>
 
       <style>{`
         .sidebar {
@@ -119,18 +97,25 @@ export function Sidebar() {
           justify-content: center;
           padding: 0.375rem;
           border-radius: 8px;
-          transition: background 0.15s;
-          margin-bottom: 0.5rem;
+          transition: background 0.15s, transform 0.15s;
+          margin-bottom: 0.375rem;
+          text-decoration: none;
         }
-        .sidebar-logo:hover { background: var(--border-sub); }
 
-        .sidebar-divider {
+        .sidebar-logo:hover {
+          background: var(--border-sub);
+          transform: scale(1.05);
+        }
+
+        .sidebar-sep {
           width: 28px;
           height: 0.5px;
           background: var(--border-sub);
           margin: 0.5rem 0;
+          flex-shrink: 0;
         }
-        .sidebar-divider--mid { margin: 0.375rem 0; }
+
+        .sidebar-sep--mid { margin: 0.375rem 0; }
 
         .sidebar-nav {
           display: flex;
@@ -141,16 +126,32 @@ export function Sidebar() {
           width: 100%;
           padding: 0 0.375rem;
         }
+      `}</style>
+    </aside>
+  );
+}
 
-        .sidebar-bottom {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.125rem;
-          width: 100%;
-          padding: 0 0.375rem;
-        }
+interface SidebarItemProps {
+  href: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  label: string;
+  active: boolean;
+}
 
+function SidebarItem({ href, icon: Icon, label, active }: SidebarItemProps) {
+  return (
+    <>
+      <Link
+        href={href}
+        className={cn("sidebar-item", active && "sidebar-item--active")}
+        title={label}
+        aria-label={label}
+        data-label={label}
+      >
+        <Icon size={18} className="sidebar-item__icon" />
+      </Link>
+
+      <style>{`
         .sidebar-item {
           width: 36px;
           height: 36px;
@@ -159,12 +160,9 @@ export function Sidebar() {
           justify-content: center;
           border-radius: 8px;
           color: var(--muted);
-          transition: color 0.15s, background 0.15s;
-          position: relative;
-          border: none;
-          background: none;
-          cursor: pointer;
           text-decoration: none;
+          position: relative;
+          transition: color 0.15s, background 0.15s;
         }
 
         .sidebar-item:hover {
@@ -172,25 +170,46 @@ export function Sidebar() {
           background: var(--border-sub);
         }
 
+        .sidebar-item:hover .sidebar-item__icon {
+          animation: icon-hover 0.3s ease forwards;
+        }
+
+        .sidebar-item:not(:hover) .sidebar-item__icon {
+          animation: icon-unhover 0.3s ease forwards;
+        }
+
+        @keyframes icon-hover {
+          0%   { transform: scale(1) rotate(0deg); }
+          50%  { transform: scale(1.2) rotate(-8deg); }
+          100% { transform: scale(1.1) rotate(0deg); }
+        }
+
+        @keyframes icon-unhover {
+          0%   { transform: scale(1.1) rotate(0deg); }
+          50%  { transform: scale(0.95) rotate(4deg); }
+          100% { transform: scale(1) rotate(0deg); }
+        }
+
         .sidebar-item--active {
           color: var(--brand-l);
           background: var(--brand-bg);
         }
 
-        .sidebar-item--logout:hover {
-          color: var(--red);
-          background: color-mix(in srgb, var(--red) 10%, transparent);
+        .sidebar-item--active:hover {
+          background: var(--brand-bg);
         }
 
         /* Tooltip */
         .sidebar-item::after {
           content: attr(data-label);
           position: absolute;
-          left: calc(100% + 8px);
+          left: calc(100% + 10px);
+          top: 50%;
+          transform: translateY(-50%);
           background: var(--surface);
           border: 0.5px solid var(--border);
           border-radius: 6px;
-          padding: 0.25rem 0.625rem;
+          padding: 0.3rem 0.625rem;
           font-size: 0.75rem;
           color: var(--text);
           white-space: nowrap;
@@ -198,30 +217,13 @@ export function Sidebar() {
           pointer-events: none;
           transition: opacity 0.1s;
           z-index: 200;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-        .sidebar-item:hover::after { opacity: 1; }
+
+        .sidebar-item:hover::after {
+          opacity: 1;
+        }
       `}</style>
-    </aside>
-  );
-}
-
-interface SidebarItemProps {
-  href: string;
-  icon: React.ComponentType<{ size?: number }>;
-  label: string;
-  active: boolean;
-}
-
-function SidebarItem({ href, icon: Icon, label, active }: SidebarItemProps) {
-  return (
-    <Link
-      href={href}
-      className={cn("sidebar-item", active && "sidebar-item--active")}
-      title={label}
-      aria-label={label}
-      data-label={label}
-    >
-      <Icon size={18} />
-    </Link>
+    </>
   );
 }
