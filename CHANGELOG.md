@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.11.1](https://github.com/Thoomaastb/CTRLD/compare/v0.11.0...v0.11.1) (2026-06-22)
+
+### Bug Fixes
+
+* **monitoring:** fix NumCores field, add Windows stub and system inventory with Docker support ([1a9722c](https://github.com/Thoomaastb/CTRLD/commit/1a9722cdc1afa32f243578002c97f30667c47be6))
+
 ## [0.11.0](https://github.com/Thoomaastb/CTRLD/compare/v0.10.1...v0.11.0) (2026-06-19)
 
 ### Features
