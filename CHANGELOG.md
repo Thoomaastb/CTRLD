@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.14.6](https://github.com/Thoomaastb/CTRLD/compare/v0.14.5...v0.14.6) (2026-06-22)
+
+### Bug Fixes
+
+* **ci:** add GOFLAGS=-mod=mod for internal packages, fix next lint command ([becc657](https://github.com/Thoomaastb/CTRLD/commit/becc6575c5dd8d801f6d897591b1760a5f6f27bd))
+
 ## [0.14.5](https://github.com/Thoomaastb/CTRLD/compare/v0.14.4...v0.14.5) (2026-06-22)
 
 ### Bug Fixes
