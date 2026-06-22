@@ -15,7 +15,7 @@ jobs:
       (github.event_name == 'issue_comment' && github.event.issue.pull_request)
     steps:
       - name: CLA Assistant
-        uses: contributor-assistant/github-action@v2.4.0
+        uses: contributor-assistant/github-action@v2.6.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_TOKEN }}
