@@ -1,108 +1,101 @@
 <div align="center">
+  <img src="docs/screenshots/dashboard.png" alt="CTRLD Dashboard" width="800" />
+  <h1>CTRLD</h1>
+  <p><strong>Modern, security-first server control panel — a better alternative to cPanel.</strong></p>
 
-# CTRLD
-
-**The server control panel cPanel should have been.**
-
-A modern, security-first, self-hosted server control panel — built with Zero Trust architecture, Privileged Identity Management, and a UI you'll actually enjoy using.
-
-[![License](https://img.shields.io/badge/license-CTRLD%20Non--Commercial%20v1.0-7F77DD)](https://github.com/Thoomaastb/CTRLD/blob/main/LICENSE)
-[![Version](https://img.shields.io/badge/version-pre--alpha-534AB7)](https://github.com/Thoomaastb/CTRLD/releases)
-[![Go](https://img.shields.io/badge/backend-Go-00ADD8)](https://go.dev)
-[![React](https://img.shields.io/badge/frontend-React%20%2F%20Next.js-61DAFB)](https://nextjs.org)
-[![Stars](https://img.shields.io/github/stars/Thoomaastb/CTRLD?style=flat&color=534AB7)](https://github.com/Thoomaastb/CTRLD/stargazers)
-
-[**Features**](#features) · [**Quick Install**](#quick-install) · [**UI Mockups**](#ui-mockups) · [**Roadmap**](#roadmap) · [**Contributing**](#contributing) · [**License**](#license)
-
+  [![License](https://img.shields.io/badge/license-CTRLD%20Non--Commercial-purple)](LICENSE)
+  [![Go Version](https://img.shields.io/badge/go-1.26+-blue)](go.mod)
+  [![Node Version](https://img.shields.io/badge/node-24+-green)](.nvmrc)
+  [![Release](https://img.shields.io/github/v/release/Thoomaastb/CTRLD)](https://github.com/Thoomaastb/CTRLD/releases)
+  [![CI](https://github.com/Thoomaastb/CTRLD/actions/workflows/ci.yml/badge.svg)](https://github.com/Thoomaastb/CTRLD/actions)
 </div>
 
 ---
 
-## Why CTRLD?
+## What is CTRLD?
 
-Existing panels were built in a different era. cPanel is expensive and closed. Webmin looks like it's from 2003. ISPConfig is powerful but overwhelming. None of them were designed with modern security in mind.
+CTRLD ("Controlled") is an open-source server control panel built with security as the foundation — not an afterthought.
 
-CTRLD is different:
+- **Zero Trust architecture** — every request authenticated and authorized
+- **PIM (Privileged Identity Management)** — time-limited admin privileges with mandatory MFA, inspired by Microsoft Entra PIM
+- **Append-only audit log** — every action recorded, nothing deletable
+- **Modern UI** — dark-first, clean design, no 1990s panel aesthetics
 
-- **Security is the architecture, not a feature.** Zero Trust from the ground up, Least Privilege by default.
-- **PIM built in.** Time-limited elevated access with mandatory re-authentication — like Microsoft Entra PIM, but self-hosted and free.
-- **A UI that doesn't embarrass you.** Dark-first, modern, premium — not a Bootstrap table from 2009.
-- **Works everywhere.** Behind NAT, CGNAT, a home firewall. No port forwarding required for multi-server setups.
+> ⚠️ **Pre-release software.** Not yet suitable for production use. Currently in active development toward v1.0.0.
 
 ---
 
 ## Features
 
-### 🔐 Security-first by design
+### ✅ Implemented
 
-- **Privileged Identity Management (PIM)** — time-limited elevated access with mandatory MFA re-authentication on every activation. A compromised session cannot trigger privileged actions without your physical MFA device.
-- **Zero Trust architecture** — every request is authenticated and authorized, no implicit trust.
-- **Modern MFA** — TOTP (Google Authenticator, Microsoft Authenticator, Authy, 1Password), Passkeys (Face ID, Touch ID, Windows Hello), and FIDO2 hardware keys (YubiKey, Nitrokey).
-- **Append-only audit log** — every action logged with user, IP, timestamp, and PIM context. Nothing can be deleted.
-- **Brute-force protection** — automatic IP lockout with escalating timeouts.
+| Feature | Status |
+|---|---|
+| Go backend with health endpoint | ✅ |
+| Next.js 16 frontend with design system | ✅ |
+| SQLite with goose migrations | ✅ |
+| Argon2id password hashing | ✅ |
+| JWT authentication (15 min access / 7 day refresh) | ✅ |
+| TOTP MFA with QR code + backup codes | ✅ |
+| PIM engine with break-glass support | ✅ |
+| Append-only audit log (DB trigger protected) | ✅ |
+| Setup wizard | ✅ |
+| User management with last-admin protection | ✅ |
+| Rate limiting (3 failures → 5 min, 10 → 1h) | ✅ |
+| `/proc`-based live metrics collector | ✅ |
+| WebSocket live metrics stream | ✅ |
+| System inventory (hostname, OS, CPU, Docker) | ✅ |
+| Full network interface inventory (incl. Docker bridges) | ✅ |
 
-### 📊 Monitoring · 📝 Logs · ⚙️ Services
+### 🔄 In Progress
 
-- Live system metrics via WebSocket — CPU per core, RAM, disk I/O, network throughput
-- Real-time log streaming (journald, syslog, auth.log) with live-tail, filtering, and export
-- Full systemd service management — critical services require an active PIM session to modify
+| Feature | Status |
+|---|---|
+| Dashboard frontend with live widgets | 🔄 |
+| Alert system | 🔄 |
 
-### 🖥️ Multi-server (Hub-Spoke)
+### 📋 Roadmap to v1.0.0
 
-- Manage multiple servers from one panel — spoke-initiated connections, no inbound ports required
-- Works behind NAT, CGNAT, and home firewalls — one-time key registration, per-spoke permissions
-
----
-
-## UI Mockups
-
-> These are design mockups created during the planning phase. The final UI may differ. No code has been written yet.
-
-| Dashboard | Log viewer | Service controls |
-|---|---|---|
-| ![Dashboard mockup](docs/screenshots/dashboard.png) | ![Log viewer mockup](docs/screenshots/log-viewer.png) | ![Service controls mockup](docs/screenshots/service-controls.png) |
-
-| Login flow | MFA setup | PIM activation |
-|---|---|---|
-| ![Login flow mockup](docs/screenshots/login-flow.png) | ![MFA setup mockup](docs/screenshots/mfa-setup.png) | ![PIM modal mockup](docs/screenshots/pim-modal.png) |
-
-| Setup wizard | Audit log | Public status page |
-|---|---|---|
-| ![Setup wizard mockup](docs/screenshots/setup-wizard.png) | ![Audit log mockup](docs/screenshots/audit-log.png) | ![Public status mockup](docs/screenshots/public-status.png) |
-
-| Hub overview | Hub settings | Spoke dashboard |
-|---|---|---|
-| ![Hub overview mockup](docs/screenshots/hub-overview.png) | ![Hub settings mockup](docs/screenshots/hub-settings.png) | ![Spoke dashboard mockup](docs/screenshots/spoke-dashboard.png) |
+| Block | Features |
+|---|---|
+| **Dashboard Frontend** | Live CPU/RAM/Disk widgets, Sparklines, System info panel |
+| **Alert System** | Configurable thresholds, toast notifications, alert history |
+| **Log Viewer** | journald, syslog, live-tail, filter, export |
+| **Services** | systemd management, start/stop/restart, service logs |
+| **Beta / Hardening** | One-line installer, TLS management, auto-updates |
+| **v1.0.0** | Pen-test, full docs, performance validation |
 
 ---
 
-## Quick Install
+## Security Architecture
 
-```bash
-curl -fsSL https://get.ctrld.io | bash
+CTRLD is built on the principle that **security must be the default, not an option**.
+
+```
+Browser (React/Next.js)
+    ↓ HTTPS / WSS
+API Gateway + Auth Layer (Go)
+    JWT · Rate Limiting · PIM-Check · TLS
+    ↓
+Backend Modules (Go)
+    Monitoring | Logs | Services | PIM-Engine | Audit-Logger
+    ↓
+SQLite                        In-Memory Store
+Users · Sessions · PIM        Live Metrics · WebSocket
+    ↓
+Linux System Layer
+    systemd · journald · /proc · D-Bus
 ```
 
-Supports **Debian 11/12** and **Ubuntu 22.04/24.04** · amd64 and arm64
+### Key Security Properties
 
-> **Not available yet** — installer will be released with v0.9.0. Watch the repo for updates.
-
----
-
-## Roadmap
-
-| Version | Focus | Status |
-|---|---|---|
-| **v0.1.0** | Project setup, CI/CD, foundations | 🔧 In progress |
-| **v0.2.0** | Auth, MFA (TOTP + Passkey + FIDO2), PIM, audit log | 📋 Planned |
-| **v0.3.0** | Dashboard, live monitoring | 📋 Planned |
-| **v0.4.0** | Log viewer, live tail | 📋 Planned |
-| **v0.5.0** | Service management | 📋 Planned |
-| **v0.9.0** | Installer, TLS, security hardening | 📋 Planned |
-| **v1.0.0** | Stable release | 🎯 Target |
-| **v2.x** | Domains, SSL, Docker, Multi-server, OIDC/SSO | 🔭 Future |
-| **v3.x** | FTP, web server, databases, Hub-SSO | 🔭 Future |
-
-Full roadmap: [Open issues](https://github.com/Thoomaastb/CTRLD/issues) · [Discussions](https://github.com/Thoomaastb/CTRLD/discussions)
+- **Argon2id** password hashing (OWASP-compliant parameters)
+- **JWT with short TTL** (15 min) + server-side invalidation
+- **PIM** — every privileged action requires fresh MFA + time-boxed session
+- **Audit log** protected by DB triggers (no UPDATE/DELETE possible)
+- **No user enumeration** — identical error messages for wrong email/password
+- **Timing-attack protection** — Argon2id runs even for non-existent users
+- **Security headers** on every response (CSP, HSTS, X-Frame-Options, etc.)
 
 ---
 
@@ -110,42 +103,81 @@ Full roadmap: [Open issues](https://github.com/Thoomaastb/CTRLD/issues) · [Disc
 
 | Layer | Technology |
 |---|---|
-| Backend | Go |
-| Frontend | React / Next.js / TypeScript |
-| Database | SQLite (v1.x) |
-| Auth | Argon2id · JWT · WebAuthn (TOTP, Passkey, FIDO2) |
-| Real-time | WebSocket |
+| Backend | Go 1.26+ |
+| Frontend | Next.js 16, React 19, TypeScript |
+| Database | SQLite via sqlc + goose |
+| Auth Hashing | Argon2id |
+| MFA | TOTP (RFC 6238), Passkey/FIDO2 (planned) |
+| JWT | golang-jwt/jwt v5 |
+| HTTP Router | chi v5 |
+| WebSocket | gorilla/websocket |
+| Frontend State | React Query v5 + Zustand v5 |
+| Styling | Tailwind CSS v4 |
+| Components | Radix UI |
+| Icons | Lucide Icons |
+| Logging | zerolog |
 | Versioning | Semantic Release + Conventional Commits |
 
 ---
 
-## Contributing
+## Quick Start (Development)
 
-CTRLD is in early development — feedback is the most valuable contribution right now.
+### Prerequisites
 
-- ⭐ **Star the repo** — helps more people find the project
-- 🐛 [**Open an issue**](https://github.com/Thoomaastb/CTRLD/issues/new/choose) — bugs, feature requests, questions
-- 💬 [**Join a discussion**](https://github.com/Thoomaastb/CTRLD/discussions) — share your use case, vote on features
-- 🔧 **Submit a PR** — see [CONTRIBUTING.md](CONTRIBUTING.md) for the process
+- Go 1.26+
+- Node.js 24+
+- GCC (for go-sqlite3 CGO)
 
-All contributors must sign the [CLA](CONTRIBUTING.md#cla) before a PR can be merged.
+### Backend
+
+```bash
+# Copy and configure
+cp config.example.yaml config.yaml
+# Set jwt_secret to a random 32+ char string
+
+# Run
+go run ./cmd/ctrld -config config.yaml
+# → http://localhost:8443
+```
+
+### Frontend
+
+```bash
+cd web
+cp .env.example .env.local
+npm install
+npm run dev
+# → http://localhost:3000
+```
+
+Open `http://localhost:3000` — you'll be guided through the setup wizard on first run.
 
 ---
 
 ## License
 
-CTRLD is released under the **CTRLD Non-Commercial License v1.0**.
+CTRLD is licensed under the **CTRLD Non-Commercial License v1.0**.
 
-**Free for:** personal use, homelab, non-profit, education, open-source projects.
-**Requires a commercial license for:** hosting providers, managed services, SaaS, or any commercial deployment.
-**Attribution required:** display "Powered by CTRLD" with a link to [ctrld.io](https://ctrld.io) (no `rel="nofollow"`).
+- ✅ **Free** for personal use, homelab, non-profit, open-source projects
+- ✅ Attribution required: "Powered by CTRLD" with a link to ctrld.io
+- ❌ **Commercial use requires a paid license** (hosting providers, MSPs, SaaS, agencies)
 
-Commercial licenses: [license@ctrld.io](mailto:license@ctrld.io) · Full text: [LICENSE](https://github.com/Thoomaastb/CTRLD/blob/main/LICENSE)
+Commercial inquiries: [license@ctrld.io](mailto:license@ctrld.io)
+
+See [LICENSE](LICENSE) for full terms.
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines, commit conventions, and the CLA requirement.
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for responsible disclosure policy.
 
 ---
 
 <div align="center">
-
-Powered by **CTRLD** · [ctrld.io](https://ctrld.io)
-
+  <sub>Built with ♥ — Security first, always.</sub>
 </div>
