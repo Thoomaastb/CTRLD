@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.14.2](https://github.com/Thoomaastb/CTRLD/compare/v0.14.1...v0.14.2) (2026-06-22)
+
+### Bug Fixes
+
+* **deps:** update go.sum with gorilla/websocket and golang.org/x/sys ([2f4f670](https://github.com/Thoomaastb/CTRLD/commit/2f4f670098bdd6f2e7d853a2d1cc1cf199ee62a8))
+
 ## [0.14.1](https://github.com/Thoomaastb/CTRLD/compare/v0.14.0...v0.14.1) (2026-06-22)
 
 ### Bug Fixes
