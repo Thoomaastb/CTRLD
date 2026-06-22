@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.11.0](https://github.com/Thoomaastb/CTRLD/compare/v0.10.1...v0.11.0) (2026-06-19)
+
+### Features
+
+* **monitoring:** add /proc metrics collector, rolling buffer and WebSocket live stream ([8e4e786](https://github.com/Thoomaastb/CTRLD/commit/8e4e78680fde8e457f322669babaab7815a6118a))
+
 ## [0.10.1](https://github.com/Thoomaastb/CTRLD/compare/v0.10.0...v0.10.1) (2026-06-19)
 
 ### Bug Fixes
