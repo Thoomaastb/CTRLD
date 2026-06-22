@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.14.0](https://github.com/Thoomaastb/CTRLD/compare/v0.13.0...v0.14.0) (2026-06-22)
+
+### Features
+
+* **logs:** add journald log viewer with live-tail, filtering and export ([1434e31](https://github.com/Thoomaastb/CTRLD/commit/1434e314e767f06ec5f2e8674a3007d64101c55b))
+
 ## [0.13.0](https://github.com/Thoomaastb/CTRLD/compare/v0.12.0...v0.13.0) (2026-06-22)
 
 ### Features
