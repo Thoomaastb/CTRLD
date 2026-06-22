@@ -12,7 +12,7 @@ jobs:
     name: Go vulnerability scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check if go.sum exists
         id: go-check
@@ -26,7 +26,7 @@ jobs:
 
       - name: Set up Go
         if: steps.go-check.outputs.exists == 'true'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
           cache: true
@@ -51,7 +51,7 @@ jobs:
     name: npm audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check if package-lock.json exists
         id: node-check
@@ -65,7 +65,7 @@ jobs:
 
       - name: Set up Node
         if: steps.node-check.outputs.exists == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: web/.nvmrc
           cache: npm
@@ -93,7 +93,7 @@ jobs:
       matrix:
         language: [go, javascript]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check if language source exists
         id: src-check
@@ -114,14 +114,14 @@ jobs:
 
       - name: Initialize CodeQL
         if: steps.src-check.outputs.exists == 'true'
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
 
       - name: Autobuild
         if: steps.src-check.outputs.exists == 'true'
-        uses: github/codeql-action/autobuild@v3
+        uses: github/codeql-action/autobuild@v4
 
       - name: Perform CodeQL analysis
         if: steps.src-check.outputs.exists == 'true'
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
