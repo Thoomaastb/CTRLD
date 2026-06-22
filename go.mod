@@ -13,7 +13,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/viper v1.20.1
 	golang.org/x/crypto v0.38.0
-	golang.org/x/sys v0.46.0
+	golang.org/x/sys v0.33.0
 )
 
 require (
