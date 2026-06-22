@@ -3,6 +3,16 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.12.0](https://github.com/Thoomaastb/CTRLD/compare/v0.11.1...v0.12.0) (2026-06-22)
+
+### Features
+
+* **ui:** add live dashboard with WebSocket metrics, sparklines and monitoring page ([ae3647d](https://github.com/Thoomaastb/CTRLD/commit/ae3647dda1832116ae0625886a41df89bc228246))
+
+### Documentation
+
+* **readme:** update roadmap to feature blocks without pre-1.0.0 versions ([031cc0d](https://github.com/Thoomaastb/CTRLD/commit/031cc0d85edda83d485179e4382efaece9bb1ed6))
+
 ## [0.11.1](https://github.com/Thoomaastb/CTRLD/compare/v0.11.0...v0.11.1) (2026-06-22)
 
 ### Bug Fixes
