@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.14.5](https://github.com/Thoomaastb/CTRLD/compare/v0.14.4...v0.14.5) (2026-06-22)
+
+### Bug Fixes
+
+* **ci:** update go.sum, fix duplicate handler functions and next lint path ([b6cb50a](https://github.com/Thoomaastb/CTRLD/commit/b6cb50af036d51c30a7a01c34be1885e95449bf7))
+
 ## [0.14.4](https://github.com/Thoomaastb/CTRLD/compare/v0.14.3...v0.14.4) (2026-06-22)
 
 ### Bug Fixes
