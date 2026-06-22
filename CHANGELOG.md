@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.13.0](https://github.com/Thoomaastb/CTRLD/compare/v0.12.0...v0.13.0) (2026-06-22)
+
+### Features
+
+* **monitoring:** add alert engine with anti-flapping, webhook support and toast notifications ([f51ce30](https://github.com/Thoomaastb/CTRLD/commit/f51ce30d0d9fa9e2715bfe6d4f943a67f4148628))
+
 ## [0.12.0](https://github.com/Thoomaastb/CTRLD/compare/v0.11.1...v0.12.0) (2026-06-22)
 
 ### Features
