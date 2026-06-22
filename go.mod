@@ -8,12 +8,12 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/mattn/go-sqlite3 v1.14.28
-	github.com/pressly/goose/v3 v3.24.3
 	github.com/pquerna/otp v1.4.0
+	github.com/pressly/goose/v3 v3.24.3
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/viper v1.20.1
 	golang.org/x/crypto v0.38.0
-	golang.org/x/sys v0.33.0
+	golang.org/x/sys v0.46.0
 )
 
 require (
