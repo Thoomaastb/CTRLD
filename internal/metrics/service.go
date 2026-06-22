@@ -26,13 +26,11 @@ func NewService(log zerolog.Logger) *Service {
 }
 
 // Start startet die periodische Metrik-Sammlung.
-// Läuft bis der Context abgebrochen wird.
 func (s *Service) Start(ctx context.Context) {
 	ticker := time.NewTicker(collectInterval)
 	defer ticker.Stop()
 
-	// Ersten Snapshot sofort sammeln
-	s.collect(false)
+	s.collect()
 
 	for {
 		select {
@@ -40,14 +38,13 @@ func (s *Service) Start(ctx context.Context) {
 			s.log.Info().Msg("metrics service beendet")
 			return
 		case <-ticker.C:
-			s.collect(false)
+			s.collect()
 		}
 	}
 }
 
-// collect sammelt einen Snapshot und legt ihn in den Buffer.
-func (s *Service) collect(includeProcesses bool) {
-	snap, err := s.collector.Collect(includeProcesses)
+func (s *Service) collect() {
+	snap, err := s.collector.Collect(false)
 	if err != nil {
 		s.log.Error().Err(err).Msg("metriken sammeln fehlgeschlagen")
 		return
@@ -60,16 +57,17 @@ func (s *Service) Latest() *Snapshot {
 	return s.buffer.Latest()
 }
 
-// History gibt die gesamte History zurück (max. 60 Einträge).
+// History gibt die gesamte History zurück.
 func (s *Service) History() []*Snapshot {
 	return s.buffer.History()
 }
 
-// CollectProcesses sammelt einmalig die Prozessliste (teurer Aufruf).
+// CollectProcesses sammelt einmalig die Prozessliste.
 func (s *Service) CollectProcesses() ([]Process, error) {
-	ram, err := collectRAM()
-	if err != nil {
-		return nil, err
-	}
-	return collectProcesses(ram.TotalBytes)
+	return s.collector.CollectProcesses()
+}
+
+// CollectSystemInfo gibt die System-Inventarisierung zurück.
+func (s *Service) CollectSystemInfo(ctx context.Context) (*SystemInfo, error) {
+	return CollectSystemInfo(ctx)
 }

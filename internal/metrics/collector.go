@@ -1,5 +1,4 @@
 // Package metrics liest System-Metriken von Linux /proc und /sys.
-// Unterstützt: CPU, RAM, Disk, Netzwerk, Load Average, Uptime, Prozesse.
 package metrics
 
 import (
@@ -16,14 +15,13 @@ import (
 
 // Snapshot enthält alle Metriken zu einem Zeitpunkt.
 type Snapshot struct {
-	Timestamp   time.Time      `json:"timestamp"`
-	CPU         CPUMetrics     `json:"cpu"`
-	RAM         RAMMetrics     `json:"ram"`
-	Disks       []DiskMetrics  `json:"disks"`
-	Networks    []NetMetrics   `json:"networks"`
-	LoadAvg     LoadAvgMetrics `json:"load_avg"`
-	UptimeSec   float64        `json:"uptime_sec"`
-	Processes   []Process      `json:"processes,omitempty"`
+	Timestamp time.Time      `json:"timestamp"`
+	CPU       CPUMetrics     `json:"cpu"`
+	RAM       RAMMetrics     `json:"ram"`
+	Disks     []DiskMetrics  `json:"disks"`
+	Networks  []NetMetrics   `json:"networks"`
+	LoadAvg   LoadAvgMetrics `json:"load_avg"`
+	UptimeSec float64        `json:"uptime_sec"`
 }
 
 // CPUMetrics enthält CPU-Auslastung gesamt + pro Core.
@@ -35,14 +33,14 @@ type CPUMetrics struct {
 
 // RAMMetrics enthält Speicher-Informationen in Bytes.
 type RAMMetrics struct {
-	TotalBytes     uint64 `json:"total_bytes"`
-	UsedBytes      uint64 `json:"used_bytes"`
-	FreeBytes      uint64 `json:"free_bytes"`
-	AvailableBytes uint64 `json:"available_bytes"`
-	CachedBytes    uint64 `json:"cached_bytes"`
-	BuffersBytes   uint64 `json:"buffers_bytes"`
-	SwapTotalBytes uint64 `json:"swap_total_bytes"`
-	SwapUsedBytes  uint64 `json:"swap_used_bytes"`
+	TotalBytes     uint64  `json:"total_bytes"`
+	UsedBytes      uint64  `json:"used_bytes"`
+	FreeBytes      uint64  `json:"free_bytes"`
+	AvailableBytes uint64  `json:"available_bytes"`
+	CachedBytes    uint64  `json:"cached_bytes"`
+	BuffersBytes   uint64  `json:"buffers_bytes"`
+	SwapTotalBytes uint64  `json:"swap_total_bytes"`
+	SwapUsedBytes  uint64  `json:"swap_used_bytes"`
 	UsagePercent   float64 `json:"usage_percent"`
 }
 
@@ -50,6 +48,7 @@ type RAMMetrics struct {
 type DiskMetrics struct {
 	Device       string  `json:"device"`
 	MountPoint   string  `json:"mount_point"`
+	FSType       string  `json:"fs_type"`
 	TotalBytes   uint64  `json:"total_bytes"`
 	UsedBytes    uint64  `json:"used_bytes"`
 	FreeBytes    uint64  `json:"free_bytes"`
@@ -60,11 +59,15 @@ type DiskMetrics struct {
 
 // NetMetrics enthält Netzwerk-I/O pro Interface.
 type NetMetrics struct {
-	Interface  string  `json:"interface"`
-	RxBytesPS  float64 `json:"rx_bytes_per_sec"`
-	TxBytesPS  float64 `json:"tx_bytes_per_sec"`
-	RxBytesTotal uint64 `json:"rx_bytes_total"`
-	TxBytesTotal uint64 `json:"tx_bytes_total"`
+	Interface    string  `json:"interface"`
+	IPAddresses  []string `json:"ip_addresses"`
+	MACAddress   string  `json:"mac_address"`
+	Type         string  `json:"type"` // physical / loopback / bridge / veth / tun
+	LinkState    string  `json:"link_state"` // up / down / unknown
+	RxBytesPS    float64 `json:"rx_bytes_per_sec"`
+	TxBytesPS    float64 `json:"tx_bytes_per_sec"`
+	RxBytesTotal uint64  `json:"rx_bytes_total"`
+	TxBytesTotal uint64  `json:"tx_bytes_total"`
 }
 
 // LoadAvgMetrics enthält Load Average 1/5/15 Minuten.
@@ -78,45 +81,74 @@ type LoadAvgMetrics struct {
 type Process struct {
 	PID        int     `json:"pid"`
 	Name       string  `json:"name"`
-	User       string  `json:"user"`
 	CPUPercent float64 `json:"cpu_percent"`
 	MemPercent float64 `json:"mem_percent"`
 	MemBytes   uint64  `json:"mem_bytes"`
 	Status     string  `json:"status"`
 }
 
+// SystemInfo enthält statische System-Inventarisierung.
+// Wird einmalig gesammelt und gecacht.
+type SystemInfo struct {
+	Hostname     string         `json:"hostname"`
+	OS           string         `json:"os"`
+	KernelVersion string        `json:"kernel_version"`
+	Architecture string         `json:"architecture"`
+	CPUModel     string         `json:"cpu_model"`
+	CPUCores     int            `json:"cpu_cores"`
+	RAMTotalBytes uint64        `json:"ram_total_bytes"`
+	Docker       *DockerInfo    `json:"docker,omitempty"`
+	CollectedAt  time.Time      `json:"collected_at"`
+}
+
+// DockerInfo enthält Docker-Inventarisierung (optional).
+type DockerInfo struct {
+	Available      bool            `json:"available"`
+	Version        string          `json:"version,omitempty"`
+	Endpoint       string          `json:"endpoint"`
+	Containers     []ContainerInfo `json:"containers,omitempty"`
+}
+
+// ContainerInfo enthält Infos zu einem Container.
+type ContainerInfo struct {
+	ID      string   `json:"id"`
+	Name    string   `json:"name"`
+	Image   string   `json:"image"`
+	Status  string   `json:"status"`
+	State   string   `json:"state"`
+	Ports   []string `json:"ports,omitempty"`
+}
+
 // cpuStat speichert CPU-Tick-Werte für Delta-Berechnung.
 type cpuStat struct {
-	user   uint64
-	nice   uint64
-	system uint64
-	idle   uint64
-	iowait uint64
-	irq    uint64
+	user    uint64
+	nice    uint64
+	system  uint64
+	idle    uint64
+	iowait  uint64
+	irq     uint64
 	softirq uint64
 }
 
-// diskStat speichert Disk-I/O-Werte für Delta-Berechnung.
+// diskStat speichert Disk-I/O für Delta-Berechnung.
 type diskStat struct {
 	readBytes  uint64
 	writeBytes uint64
-	timestamp  time.Time
 }
 
 // netStat speichert Netzwerk-I/O für Delta-Berechnung.
 type netStat struct {
-	rxBytes   uint64
-	txBytes   uint64
-	timestamp time.Time
+	rxBytes uint64
+	txBytes uint64
 }
 
 // Collector sammelt System-Metriken.
 type Collector struct {
-	mu          sync.Mutex
-	prevCPU     []cpuStat
-	prevDisk    map[string]diskStat
-	prevNet     map[string]netStat
-	prevTime    time.Time
+	mu       sync.Mutex
+	prevCPU  []cpuStat
+	prevDisk map[string]diskStat
+	prevNet  map[string]netStat
+	prevTime time.Time
 }
 
 // NewCollector erstellt einen neuen Collector.
@@ -126,7 +158,6 @@ func NewCollector() *Collector {
 		prevNet:  make(map[string]netStat),
 		prevTime: time.Now(),
 	}
-	// Initialer Read um Deltas beim ersten Aufruf zu vermeiden
 	c.prevCPU, _ = readCPUStat()
 	return c
 }
@@ -139,60 +170,41 @@ func (c *Collector) Collect(includeProcesses bool) (*Snapshot, error) {
 	now := time.Now()
 	elapsed := now.Sub(c.prevTime).Seconds()
 	if elapsed < 0.1 {
-		elapsed = 0.1 // Division-by-zero Schutz
+		elapsed = 0.1
 	}
 
-	snap := &Snapshot{
-		Timestamp: now,
-		NumCores:  runtime.NumCPU(),
-	}
+	snap := &Snapshot{Timestamp: now}
 
-	// CPU
-	cpu, err := c.collectCPU()
-	if err == nil {
+	if cpu, err := c.collectCPU(); err == nil {
 		snap.CPU = cpu
 	}
-
-	// RAM
-	ram, err := collectRAM()
-	if err == nil {
+	if ram, err := collectRAM(); err == nil {
 		snap.RAM = ram
 	}
-
-	// Load Average
-	load, err := collectLoadAvg()
-	if err == nil {
+	if load, err := collectLoadAvg(); err == nil {
 		snap.LoadAvg = load
 	}
-
-	// Uptime
-	uptime, err := collectUptime()
-	if err == nil {
+	if uptime, err := collectUptime(); err == nil {
 		snap.UptimeSec = uptime
 	}
-
-	// Disk
-	disks, err := c.collectDisks(elapsed)
-	if err == nil {
+	if disks, err := c.collectDisks(elapsed); err == nil {
 		snap.Disks = disks
 	}
-
-	// Netzwerk
-	nets, err := c.collectNetwork(elapsed)
-	if err == nil {
+	if nets, err := c.collectNetwork(elapsed); err == nil {
 		snap.Networks = nets
-	}
-
-	// Prozesse (optional — teurer)
-	if includeProcesses {
-		procs, err := collectProcesses(snap.RAM.TotalBytes)
-		if err == nil {
-			snap.Processes = procs
-		}
 	}
 
 	c.prevTime = now
 	return snap, nil
+}
+
+// CollectProcesses sammelt die Prozessliste (teurer Aufruf).
+func (c *Collector) CollectProcesses() ([]Process, error) {
+	ram, err := collectRAM()
+	if err != nil {
+		return nil, err
+	}
+	return collectProcesses(ram.TotalBytes)
 }
 
 // ── CPU ───────────────────────────────────────────────────────────────────────
@@ -203,18 +215,18 @@ func (c *Collector) collectCPU() (CPUMetrics, error) {
 		return CPUMetrics{}, err
 	}
 
-	metrics := CPUMetrics{NumCores: len(current) - 1} // Index 0 = gesamt
+	numCores := runtime.NumCPU()
+	metrics := CPUMetrics{NumCores: numCores}
+
 	if len(current) == 0 || len(c.prevCPU) == 0 {
 		c.prevCPU = current
 		return metrics, nil
 	}
 
-	// Gesamt-CPU (Index 0)
 	if len(c.prevCPU) > 0 {
 		metrics.UsagePercent = cpuUsagePercent(c.prevCPU[0], current[0])
 	}
 
-	// Pro Core
 	coreCount := len(current) - 1
 	if coreCount < 0 {
 		coreCount = 0
@@ -292,7 +304,7 @@ func collectRAM() (RAMMetrics, error) {
 		}
 		key := strings.TrimSuffix(fields[0], ":")
 		val, _ := parseUint(fields[1])
-		mem[key] = val * 1024 // kB → Bytes
+		mem[key] = val * 1024
 	}
 
 	m := RAMMetrics{
@@ -320,7 +332,7 @@ func collectLoadAvg() (LoadAvgMetrics, error) {
 	}
 	fields := strings.Fields(string(data))
 	if len(fields) < 3 {
-		return LoadAvgMetrics{}, fmt.Errorf("metrics: ungültiges loadavg format")
+		return LoadAvgMetrics{}, fmt.Errorf("ungültiges loadavg format")
 	}
 	var l LoadAvgMetrics
 	l.Load1, _  = strconv.ParseFloat(fields[0], 64)
@@ -338,7 +350,7 @@ func collectUptime() (float64, error) {
 	}
 	fields := strings.Fields(string(data))
 	if len(fields) < 1 {
-		return 0, fmt.Errorf("metrics: ungültiges uptime format")
+		return 0, fmt.Errorf("ungültiges uptime format")
 	}
 	return strconv.ParseFloat(fields[0], 64)
 }
@@ -346,13 +358,11 @@ func collectUptime() (float64, error) {
 // ── Disk ──────────────────────────────────────────────────────────────────────
 
 func (c *Collector) collectDisks(elapsed float64) ([]DiskMetrics, error) {
-	// Disk-I/O aus /proc/diskstats
 	ioStats, err := readDiskStats()
 	if err != nil {
 		return nil, err
 	}
 
-	// Mount-Punkte aus /proc/mounts
 	mounts, err := readMounts()
 	if err != nil {
 		return nil, err
@@ -362,11 +372,7 @@ func (c *Collector) collectDisks(elapsed float64) ([]DiskMetrics, error) {
 	seen := make(map[string]bool)
 
 	for _, mount := range mounts {
-		if seen[mount.device] {
-			continue
-		}
-		// Nur echte Dateisysteme
-		if !isRealFS(mount.fstype) {
+		if seen[mount.device] || !isRealFS(mount.fstype) {
 			continue
 		}
 
@@ -374,10 +380,14 @@ func (c *Collector) collectDisks(elapsed float64) ([]DiskMetrics, error) {
 		if err := statfs(mount.point, &stat); err != nil {
 			continue
 		}
+		if stat.Bsize <= 0 {
+			continue
+		}
 
 		d := DiskMetrics{
 			Device:     mount.device,
 			MountPoint: mount.point,
+			FSType:     mount.fstype,
 			TotalBytes: stat.Blocks * uint64(stat.Bsize),
 			FreeBytes:  stat.Bfree * uint64(stat.Bsize),
 		}
@@ -386,19 +396,13 @@ func (c *Collector) collectDisks(elapsed float64) ([]DiskMetrics, error) {
 			d.UsagePercent = float64(d.UsedBytes) / float64(d.TotalBytes) * 100.0
 		}
 
-		// I/O-Delta
 		devName := filepath.Base(mount.device)
 		if io, ok := ioStats[devName]; ok {
 			if prev, ok := c.prevDisk[devName]; ok {
-				dt := elapsed
-				d.ReadBytesPS  = float64(io.readBytes-prev.readBytes) / dt
-				d.WriteBytesPS = float64(io.writeBytes-prev.writeBytes) / dt
+				d.ReadBytesPS  = float64(io.readBytes-prev.readBytes) / elapsed
+				d.WriteBytesPS = float64(io.writeBytes-prev.writeBytes) / elapsed
 			}
-			c.prevDisk[devName] = diskStat{
-				readBytes:  io.readBytes,
-				writeBytes: io.writeBytes,
-				timestamp:  time.Now(),
-			}
+			c.prevDisk[devName] = diskStat{readBytes: io.readBytes, writeBytes: io.writeBytes}
 		}
 
 		seen[mount.device] = true
@@ -427,11 +431,7 @@ func readMounts() ([]mountEntry, error) {
 		if len(fields) < 3 {
 			continue
 		}
-		mounts = append(mounts, mountEntry{
-			device: fields[0],
-			point:  fields[1],
-			fstype: fields[2],
-		})
+		mounts = append(mounts, mountEntry{device: fields[0], point: fields[1], fstype: fields[2]})
 	}
 	return mounts, scanner.Err()
 }
@@ -468,15 +468,12 @@ func readDiskStats() (map[string]rawDiskIO, error) {
 		name := fields[2]
 		readSectors, _  := parseUint(fields[5])
 		writeSectors, _ := parseUint(fields[9])
-		stats[name] = rawDiskIO{
-			readBytes:  readSectors * 512,
-			writeBytes: writeSectors * 512,
-		}
+		stats[name] = rawDiskIO{readBytes: readSectors * 512, writeBytes: writeSectors * 512}
 	}
 	return stats, scanner.Err()
 }
 
-// ── Netzwerk ──────────────────────────────────────────────────────────────────
+// ── Netzwerk (vollständig inkl. Docker) ───────────────────────────────────────
 
 func (c *Collector) collectNetwork(elapsed float64) ([]NetMetrics, error) {
 	f, err := os.Open("/proc/net/dev")
@@ -487,9 +484,8 @@ func (c *Collector) collectNetwork(elapsed float64) ([]NetMetrics, error) {
 
 	var nets []NetMetrics
 	scanner := bufio.NewScanner(f)
-	// Erste 2 Zeilen überspringen (Header)
-	scanner.Scan()
-	scanner.Scan()
+	scanner.Scan() // Header 1
+	scanner.Scan() // Header 2
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -498,10 +494,6 @@ func (c *Collector) collectNetwork(elapsed float64) ([]NetMetrics, error) {
 			continue
 		}
 		iface := strings.TrimSpace(line[:colonIdx])
-		// lo überspringen
-		if iface == "lo" {
-			continue
-		}
 
 		fields := strings.Fields(line[colonIdx+1:])
 		if len(fields) < 9 {
@@ -515,26 +507,110 @@ func (c *Collector) collectNetwork(elapsed float64) ([]NetMetrics, error) {
 			Interface:    iface,
 			RxBytesTotal: rxBytes,
 			TxBytesTotal: txBytes,
+			Type:         ifaceType(iface),
+			LinkState:    readLinkState(iface),
+			MACAddress:   readMAC(iface),
+			IPAddresses:  readIPAddresses(iface),
 		}
 
 		if prev, ok := c.prevNet[iface]; ok {
-			dt := elapsed
-			n.RxBytesPS = float64(rxBytes-prev.rxBytes) / dt
-			n.TxBytesPS = float64(txBytes-prev.txBytes) / dt
+			n.RxBytesPS = float64(rxBytes-prev.rxBytes) / elapsed
+			n.TxBytesPS = float64(txBytes-prev.txBytes) / elapsed
 		}
-
-		c.prevNet[iface] = netStat{
-			rxBytes:   rxBytes,
-			txBytes:   txBytes,
-			timestamp: time.Now(),
-		}
+		c.prevNet[iface] = netStat{rxBytes: rxBytes, txBytes: txBytes}
 
 		nets = append(nets, n)
 	}
 	return nets, scanner.Err()
 }
 
-// ── Prozesse ─────────────────────────────────────────────────────────────────
+// ifaceType erkennt den Interface-Typ anhand des Namens.
+func ifaceType(iface string) string {
+	switch {
+	case iface == "lo":
+		return "loopback"
+	case strings.HasPrefix(iface, "docker"):
+		return "bridge"
+	case strings.HasPrefix(iface, "br-"):
+		return "bridge"
+	case strings.HasPrefix(iface, "veth"):
+		return "veth"
+	case strings.HasPrefix(iface, "tun") || strings.HasPrefix(iface, "tap"):
+		return "tun"
+	case strings.HasPrefix(iface, "virbr"):
+		return "bridge"
+	default:
+		return "physical"
+	}
+}
+
+// readLinkState liest den Link-Status aus /sys/class/net/<iface>/operstate.
+func readLinkState(iface string) string {
+	data, err := os.ReadFile(fmt.Sprintf("/sys/class/net/%s/operstate", iface))
+	if err != nil {
+		return "unknown"
+	}
+	return strings.TrimSpace(string(data))
+}
+
+// readMAC liest die MAC-Adresse aus /sys/class/net/<iface>/address.
+func readMAC(iface string) string {
+	data, err := os.ReadFile(fmt.Sprintf("/sys/class/net/%s/address", iface))
+	if err != nil {
+		return ""
+	}
+	mac := strings.TrimSpace(string(data))
+	if mac == "00:00:00:00:00:00" {
+		return ""
+	}
+	return mac
+}
+
+// readIPAddresses liest IP-Adressen aus /proc/net/fib_trie (IPv4).
+func readIPAddresses(iface string) []string {
+	// Einfacherer Ansatz: /proc/net/if_inet6 für IPv6 + eigene Parsing für IPv4
+	// Für IPv4: lesen wir aus /proc/net/fib_trie ist komplex — nutze /proc/net/dev + ifconfig-Alternative
+	// Einfachste zuverlässige Methode: /sys/class/net/<iface>/
+	var ips []string
+
+	// IPv4 via /proc/net/fib_trie — zu komplex, stattdessen via Netlink-ähnlicher Methode
+	// Für v0.11.0: IP aus /proc/net/if_inet6 (IPv6) lesen, IPv4 TODO für v0.12.0
+	f, err := os.Open("/proc/net/if_inet6")
+	if err != nil {
+		return ips
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		fields := strings.Fields(scanner.Text())
+		if len(fields) < 6 {
+			continue
+		}
+		if fields[5] != iface {
+			continue
+		}
+		// IPv6-Adresse formatieren
+		addr := fields[0]
+		if len(addr) == 32 {
+			var formatted strings.Builder
+			for i := 0; i < 32; i += 4 {
+				if i > 0 {
+					formatted.WriteString(":")
+				}
+				formatted.WriteString(addr[i : i+4])
+			}
+			ip := formatted.String()
+			// Link-local überspringen
+			if !strings.HasPrefix(ip, "fe80") {
+				ips = append(ips, ip)
+			}
+		}
+	}
+	return ips
+}
+
+// ── Prozesse ──────────────────────────────────────────────────────────────────
 
 func collectProcesses(totalRAM uint64) ([]Process, error) {
 	entries, err := os.ReadDir("/proc")
@@ -551,25 +627,21 @@ func collectProcesses(totalRAM uint64) ([]Process, error) {
 		if err != nil {
 			continue
 		}
-
 		p, err := readProcess(pid, totalRAM)
 		if err != nil {
 			continue
 		}
 		procs = append(procs, p)
 	}
-
 	return procs, nil
 }
 
 func readProcess(pid int, totalRAM uint64) (Process, error) {
-	// Name aus /proc/PID/comm
 	commBytes, err := os.ReadFile(fmt.Sprintf("/proc/%d/comm", pid))
 	if err != nil {
 		return Process{}, err
 	}
 
-	// Status aus /proc/PID/status
 	statusBytes, err := os.ReadFile(fmt.Sprintf("/proc/%d/status", pid))
 	if err != nil {
 		return Process{}, err
@@ -596,11 +668,8 @@ func readProcess(pid int, totalRAM uint64) (Process, error) {
 			}
 		}
 	}
-
 	return p, nil
 }
-
-// ── Hilfsfunktionen ───────────────────────────────────────────────────────────
 
 func parseUint(s string) (uint64, error) {
 	return strconv.ParseUint(strings.TrimSpace(s), 10, 64)

@@ -23,18 +23,14 @@ type MetricsHandler struct {
 
 // NewMetricsHandler erstellt einen neuen MetricsHandler.
 func NewMetricsHandler(metricsSvc *metrics.Service, pimSvc *pim.Service, log zerolog.Logger) *MetricsHandler {
-	return &MetricsHandler{
-		metricsSvc: metricsSvc,
-		pimSvc:     pimSvc,
-		log:        log,
-	}
+	return &MetricsHandler{metricsSvc: metricsSvc, pimSvc: pimSvc, log: log}
 }
 
 // RegisterRoutes registriert alle Monitoring-Routen.
 func (h *MetricsHandler) RegisterRoutes(r chi.Router, authn *authmw.Authenticator) {
 	r.Group(func(r chi.Router) {
 		r.Use(authn.Require)
-
+		r.Get("/system/info", h.GetSystemInfo)
 		r.Get("/system/metrics", h.GetMetrics)
 		r.Get("/system/metrics/history", h.GetHistory)
 		r.Get("/system/processes", h.GetProcesses)
@@ -42,8 +38,32 @@ func (h *MetricsHandler) RegisterRoutes(r chi.Router, authn *authmw.Authenticato
 	})
 }
 
+// GetSystemInfo GET /api/v1/system/info
+// Gibt statische Inventarisierung zurück (Hostname, OS, CPU, Docker, Netzwerk-Interfaces).
+func (h *MetricsHandler) GetSystemInfo(w http.ResponseWriter, r *http.Request) {
+	info, err := h.metricsSvc.CollectSystemInfo(r.Context())
+	if err != nil {
+		h.log.Error().Err(err).Msg("system info fehlgeschlagen")
+		writeError(w, http.StatusInternalServerError, "system info nicht verfügbar", "INTERNAL_ERROR")
+		return
+	}
+
+	// Netzwerk-Interfaces aus letztem Snapshot anreichern
+	if snap := h.metricsSvc.Latest(); snap != nil {
+		writeJSON(w, http.StatusOK, map[string]interface{}{
+			"system":    info,
+			"networks":  snap.Networks,
+			"disk":      snap.Disks,
+		})
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]interface{}{
+		"system": info,
+	})
+}
+
 // GetMetrics GET /api/v1/system/metrics
-// Gibt den aktuellen Metriken-Snapshot zurück.
 func (h *MetricsHandler) GetMetrics(w http.ResponseWriter, r *http.Request) {
 	snap := h.metricsSvc.Latest()
 	if snap == nil {
@@ -54,7 +74,6 @@ func (h *MetricsHandler) GetMetrics(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetHistory GET /api/v1/system/metrics/history
-// Gibt die letzten 60 Snapshots zurück (für Chart-Initialisierung).
 func (h *MetricsHandler) GetHistory(w http.ResponseWriter, r *http.Request) {
 	history := h.metricsSvc.History()
 	if history == nil {
@@ -64,7 +83,6 @@ func (h *MetricsHandler) GetHistory(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetProcesses GET /api/v1/system/processes
-// Gibt die Prozessliste zurück, sortierbar nach CPU/RAM/PID.
 func (h *MetricsHandler) GetProcesses(w http.ResponseWriter, r *http.Request) {
 	procs, err := h.metricsSvc.CollectProcesses()
 	if err != nil {
@@ -73,28 +91,18 @@ func (h *MetricsHandler) GetProcesses(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Sortierung
 	sortBy := r.URL.Query().Get("sort")
 	switch sortBy {
 	case "cpu":
-		sort.Slice(procs, func(i, j int) bool {
-			return procs[i].CPUPercent > procs[j].CPUPercent
-		})
+		sort.Slice(procs, func(i, j int) bool { return procs[i].CPUPercent > procs[j].CPUPercent })
 	case "mem":
-		sort.Slice(procs, func(i, j int) bool {
-			return procs[i].MemBytes > procs[j].MemBytes
-		})
+		sort.Slice(procs, func(i, j int) bool { return procs[i].MemBytes > procs[j].MemBytes })
 	case "pid":
-		sort.Slice(procs, func(i, j int) bool {
-			return procs[i].PID < procs[j].PID
-		})
-	default: // Standard: nach RAM sortieren
-		sort.Slice(procs, func(i, j int) bool {
-			return procs[i].MemBytes > procs[j].MemBytes
-		})
+		sort.Slice(procs, func(i, j int) bool { return procs[i].PID < procs[j].PID })
+	default:
+		sort.Slice(procs, func(i, j int) bool { return procs[i].MemBytes > procs[j].MemBytes })
 	}
 
-	// Top N (Default: 50)
 	limit := 50
 	if l := r.URL.Query().Get("limit"); l != "" {
 		if n, err := strconv.Atoi(l); err == nil && n > 0 && n <= 200 {
@@ -112,7 +120,6 @@ func (h *MetricsHandler) GetProcesses(w http.ResponseWriter, r *http.Request) {
 }
 
 // KillProcess DELETE /api/v1/system/processes/{pid}
-// Beendet einen Prozess — erfordert aktive PIM-Sitzung.
 func (h *MetricsHandler) KillProcess(w http.ResponseWriter, r *http.Request) {
 	claims := authmw.ClaimsFromContext(r.Context())
 	if claims == nil {
@@ -120,7 +127,6 @@ func (h *MetricsHandler) KillProcess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// PIM-Check
 	pimID, err := h.pimSvc.CheckAndRecord(r.Context(), claims.UserID)
 	if err != nil {
 		writeError(w, http.StatusForbidden, "aktive pim-sitzung erforderlich", "PIM_REQUIRED")
@@ -134,30 +140,22 @@ func (h *MetricsHandler) KillProcess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// SIGTERM senden
 	if err := killProcess(pid); err != nil {
 		h.log.Error().Err(err).Int("pid", pid).Str("pim_id", pimID).Msg("prozess beenden fehlgeschlagen")
 		writeError(w, http.StatusInternalServerError, "prozess konnte nicht beendet werden", "KILL_FAILED")
 		return
 	}
 
-	h.log.Info().
-		Int("pid", pid).
-		Str("user_id", claims.UserID).
-		Str("pim_id", pimID).
-		Msg("prozess beendet")
-
+	h.log.Info().Int("pid", pid).Str("user_id", claims.UserID).Str("pim_id", pimID).Msg("prozess beendet")
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// writeJSON schreibt eine JSON-Antwort.
 func writeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(v)
 }
 
-// writeError schreibt eine JSON-Fehlerantwort.
 func writeError(w http.ResponseWriter, status int, msg, code string) {
 	writeJSON(w, status, map[string]string{"error": msg, "code": code})
 }
