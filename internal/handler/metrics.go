@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 	"sort"
 	"strconv"
@@ -9,9 +8,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/rs/zerolog"
 
-	"github.com/Thoomaastab/CTRLD/internal/metrics"
-	authmw "github.com/Thoomaastab/CTRLD/internal/middleware"
-	"github.com/Thoomaastab/CTRLD/internal/pim"
+	"github.com/Thoomaastb/CTRLD/internal/metrics"
+	authmw "github.com/Thoomaastb/CTRLD/internal/middleware"
+	"github.com/Thoomaastb/CTRLD/internal/pim"
 )
 
 // MetricsHandler kapselt Monitoring HTTP-Handler.
@@ -39,7 +38,6 @@ func (h *MetricsHandler) RegisterRoutes(r chi.Router, authn *authmw.Authenticato
 }
 
 // GetSystemInfo GET /api/v1/system/info
-// Gibt statische Inventarisierung zurück (Hostname, OS, CPU, Docker, Netzwerk-Interfaces).
 func (h *MetricsHandler) GetSystemInfo(w http.ResponseWriter, r *http.Request) {
 	info, err := h.metricsSvc.CollectSystemInfo(r.Context())
 	if err != nil {
@@ -48,12 +46,11 @@ func (h *MetricsHandler) GetSystemInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Netzwerk-Interfaces aus letztem Snapshot anreichern
 	if snap := h.metricsSvc.Latest(); snap != nil {
 		writeJSON(w, http.StatusOK, map[string]interface{}{
-			"system":    info,
-			"networks":  snap.Networks,
-			"disk":      snap.Disks,
+			"system":   info,
+			"networks": snap.Networks,
+			"disk":     snap.Disks,
 		})
 		return
 	}
@@ -148,14 +145,4 @@ func (h *MetricsHandler) KillProcess(w http.ResponseWriter, r *http.Request) {
 
 	h.log.Info().Int("pid", pid).Str("user_id", claims.UserID).Str("pim_id", pimID).Msg("prozess beendet")
 	w.WriteHeader(http.StatusNoContent)
-}
-
-func writeJSON(w http.ResponseWriter, status int, v any) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(v)
-}
-
-func writeError(w http.ResponseWriter, status int, msg, code string) {
-	writeJSON(w, status, map[string]string{"error": msg, "code": code})
 }
