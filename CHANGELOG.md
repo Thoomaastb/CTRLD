@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.14.1](https://github.com/Thoomaastb/CTRLD/compare/v0.14.0...v0.14.1) (2026-06-22)
+
+### Bug Fixes
+
+* **ci:** remove duplicate writeJSON/writeError, fix go.sum and next lint flag ([96b5305](https://github.com/Thoomaastb/CTRLD/commit/96b53055cb041784498ff5e6224a6fb65c9707af))
+
 ## [0.14.0](https://github.com/Thoomaastb/CTRLD/compare/v0.13.0...v0.14.0) (2026-06-22)
 
 ### Features
