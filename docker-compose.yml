@@ -1,36 +1,54 @@
-name: ctrld-dev
+# CTRLD Pre-Release — docker-compose.yml
+# Nutzung:
+#   cp .env.example .env
+#   # JWT-Secret setzen in .env
+#   docker compose up -d
+#   # Öffne http://<VM-IP>:3000 → Setup-Wizard
+
+name: ctrld
 
 services:
-  backend:
-    build:
-      context: .
-      target: backend-builder
-    command: go run ./cmd/ctrld -config /etc/ctrld/config.yaml
-    ports:
-      - "8443:8443"
-    volumes:
-      - .:/app
-      - ctrld-data:/var/lib/ctrld
-    environment:
-      - CTRLD_SERVER_PORT=8443
-      - CTRLD_LOG_LEVEL=debug
-      - CTRLD_LOG_FORMAT=pretty
-    depends_on:
-      - frontend
+  ctrld:
+    image: ghcr.io/thoomaastb/ctrld:latest
+    container_name: ctrld
+    restart: unless-stopped
 
-  frontend:
-    image: node:24-alpine
-    working_dir: /app/web
-    command: npm run dev
     ports:
-      - "3000:3000"
-    volumes:
-      - ./web:/app/web
-      - web-modules:/app/web/node_modules
+      - "${CTRLD_PORT:-8443}:8443"   # Backend API
+      - "${NEXT_PORT:-3000}:3000"    # Frontend
+
     environment:
-      - NEXT_TELEMETRY_DISABLED=1
-      - NEXT_PUBLIC_API_URL=http://backend:8443
+      # Pflichtfeld — mindestens 32 Zeichen
+      # Generieren: openssl rand -hex 32
+      CTRLD_SECURITY_JWT_SECRET: "${CTRLD_SECURITY_JWT_SECRET:?Bitte JWT Secret in .env setzen}"
+      CTRLD_LOG_LEVEL: "${CTRLD_LOG_LEVEL:-info}"
+      CTRLD_PORT: "${CTRLD_PORT:-8443}"
+      NEXT_PORT: "${NEXT_PORT:-3000}"
+
+    volumes:
+      # Persistente Daten (SQLite DB + Config)
+      - ctrld-data:/var/lib/ctrld
+      - ctrld-config:/etc/ctrld
+      # Host-Metriken (read-only)
+      - /proc:/proc:ro
+      - /sys:/sys:ro
+      - /etc/os-release:/etc/os-release:ro
+      # Journald-Logs (optional — für Log-Viewer)
+      - /run/log/journal:/run/log/journal:ro
+      - /var/log/journal:/var/log/journal:ro
+      # Docker-Socket (optional — für Container-Übersicht)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    # Zugriff auf Host-PIDs (für Prozessliste + Metriken)
+    pid: host
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8443/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
 
 volumes:
   ctrld-data:
-  web-modules:
+  ctrld-config:

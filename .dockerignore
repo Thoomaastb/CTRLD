@@ -1,0 +1,34 @@
+# Git
+.git
+.gitignore
+
+# Node
+web/node_modules
+web/.next
+web/out
+
+# Go
+*.exe
+*.test
+ctrld
+
+# Config (wird im Container generiert)
+config.yaml
+*.db
+
+# Docker
+docker-compose*.yml
+.env
+.env.*
+!.env.example
+
+# Docs
+docs/
+*.md
+!README.md
+
+# Scripts (nicht im Image benötigt)
+scripts/
+
+# CI
+.github/
