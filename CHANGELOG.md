@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.16.0](https://github.com/Thoomaastb/CTRLD/compare/v0.15.0...v0.16.0) (2026-06-24)
+
+### Features
+
+* **docker:** add multi-stage Dockerfile, docker-compose and GitHub Actions workflow ([48d8769](https://github.com/Thoomaastb/CTRLD/commit/48d8769258a8a0f03e963f4144baee82ae5cb0d8))
+
 ## [0.15.0](https://github.com/Thoomaastb/CTRLD/compare/v0.14.6...v0.15.0) (2026-06-24)
 
 ### Features
