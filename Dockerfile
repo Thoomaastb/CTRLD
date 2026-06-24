@@ -6,8 +6,7 @@ FROM node:24-alpine AS frontend-builder
 WORKDIR /app/web
 
 COPY web/package.json web/package-lock.json ./
-RUN npm ci --frozen-lockfile
-
+RUN npm ci
 COPY web/ ./
 RUN npm run build
 
@@ -17,21 +16,16 @@ RUN npm run build
 FROM golang:1.24-bookworm AS backend-builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    libc-dev \
-    && rm -rf /var/lib/apt/lists/*
+    gcc libc-dev && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# go.mod + go.sum kopieren
+# ALLES zuerst kopieren — dann tidy + build
 COPY go.mod go.sum ./
-
-# go mod tidy läuft im Container — hier funktioniert es weil das Repo
-# nicht als externes Modul aufgelöst werden muss (kein git ls-remote)
-RUN go mod download && go mod tidy
-
-# Source kopieren
 COPY . .
+
+# go mod tidy NACH dem Source-Copy — hat jetzt alle Packages
+RUN go mod tidy && go mod download
 
 ARG VERSION=dev
 RUN CGO_ENABLED=1 GOOS=linux go build \
@@ -45,9 +39,7 @@ RUN CGO_ENABLED=1 GOOS=linux go build \
 FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+    ca-certificates curl && rm -rf /var/lib/apt/lists/*
 
 RUN useradd --system --no-create-home --shell /sbin/nologin \
     --home-dir /var/lib/ctrld ctrld
