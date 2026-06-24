@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.16.5](https://github.com/Thoomaastb/CTRLD/compare/v0.16.4...v0.16.5) (2026-06-24)
+
+### Bug Fixes
+
+* **docker:** remove go mod tidy, use -mod=mod and GONOSUMDB env vars ([fdd213d](https://github.com/Thoomaastb/CTRLD/commit/fdd213dba816f01286cc77578690c5f5faf2454f))
+
 ## [0.16.4](https://github.com/Thoomaastb/CTRLD/compare/v0.16.3...v0.16.4) (2026-06-24)
 
 ### Bug Fixes
