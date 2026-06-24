@@ -9,8 +9,6 @@ COPY web/package.json web/package-lock.json ./
 RUN npm ci --frozen-lockfile
 
 COPY web/ ./
-
-# Next.js Standalone-Output aktivieren (wird in next.config.ts gesetzt)
 RUN npm run build
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -18,7 +16,6 @@ RUN npm run build
 # ─────────────────────────────────────────────────────────────────────────────
 FROM golang:1.24-bookworm AS backend-builder
 
-# CGO benötigt GCC (für go-sqlite3)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libc-dev \
@@ -38,7 +35,7 @@ RUN CGO_ENABLED=1 GOOS=linux go build \
     ./cmd/ctrld
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Stage 3: Final Runtime Image (Debian Slim)
+# Stage 3: Final Runtime Image
 # ─────────────────────────────────────────────────────────────────────────────
 FROM debian:bookworm-slim
 
@@ -47,23 +44,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# System-User (kein Login)
 RUN useradd --system --no-create-home --shell /sbin/nologin \
     --home-dir /var/lib/ctrld ctrld
 
-# Verzeichnisse anlegen
 RUN mkdir -p /var/lib/ctrld /etc/ctrld /app/web && \
     chown ctrld:ctrld /var/lib/ctrld /etc/ctrld
 
-# Backend Binary
 COPY --from=backend-builder /usr/local/bin/ctrld /usr/local/bin/ctrld
-
-# Frontend (Next.js Standalone)
 COPY --from=frontend-builder /app/web/.next/standalone /app/web/
 COPY --from=frontend-builder /app/web/.next/static     /app/web/.next/static
 COPY --from=frontend-builder /app/web/public           /app/web/public
 
-# Entrypoint
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
