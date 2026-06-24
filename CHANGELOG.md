@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.16.2](https://github.com/Thoomaastb/CTRLD/compare/v0.16.1...v0.16.2) (2026-06-24)
+
+### Bug Fixes
+
+* **docker:** add GOFLAGS=-mod=mod to bypass go.sum issues in CI build ([752634e](https://github.com/Thoomaastb/CTRLD/commit/752634e4783c511fc3b6fa11149f8828d640902d))
+
 ## [0.16.1](https://github.com/Thoomaastb/CTRLD/compare/v0.16.0...v0.16.1) (2026-06-24)
 
 ### Bug Fixes
