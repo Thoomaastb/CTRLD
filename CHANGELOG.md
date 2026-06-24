@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.16.6](https://github.com/Thoomaastb/CTRLD/compare/v0.16.5...v0.16.6) (2026-06-24)
+
+### Bug Fixes
+
+* **docker:** complete Dockerfile with all 3 stages and GOPRIVATE env vars ([f0fd435](https://github.com/Thoomaastb/CTRLD/commit/f0fd435266819d28d5a2da57460e6c30d76738c5))
+
 ## [0.16.5](https://github.com/Thoomaastb/CTRLD/compare/v0.16.4...v0.16.5) (2026-06-24)
 
 ### Bug Fixes
