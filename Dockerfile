@@ -1,4 +1,4 @@
-# Stage 1: Frontend
+# Stage 1: Frontend Build (Next.js)
 FROM node:24-alpine AS frontend-builder
 WORKDIR /app/web
 COPY web/package.json web/package-lock.json ./
@@ -6,23 +6,21 @@ RUN npm ci
 COPY web/ ./
 RUN npm run build
 
-# Stage 2: Backend
+# Stage 2: Backend Build (Go)
 FROM golang:1.24-bookworm AS backend-builder
 RUN apt-get update && apt-get install -y --no-install-recommends gcc libc-dev && rm -rf /var/lib/apt/lists/*
-WORKDIR /app
 
-# Nur go.mod + go.sum — externe Dependencies downloaden
-COPY go.mod go.sum ./
+ENV GOPRIVATE=github.com/Thoomaastb/CTRLD
 ENV GONOSUMDB=github.com/Thoomaastb/CTRLD
 ENV GONOPROXY=github.com/Thoomaastb/CTRLD
-ENV GONOSUMCHECK=*
+
+WORKDIR /app
+COPY go.mod go.sum ./
+COPY . .
 RUN go mod download
 
-# Source kopieren + bauen (kein go mod tidy!)
-COPY . .
 ARG VERSION=dev
 RUN CGO_ENABLED=1 GOOS=linux go build \
-    -mod=mod \
     -ldflags="-s -w -X github.com/Thoomaastb/CTRLD/pkg/version.Version=${VERSION}" \
     -o /usr/local/bin/ctrld \
     ./cmd/ctrld
