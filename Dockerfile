@@ -24,12 +24,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY go.mod go.sum ./
-RUN go mod download
+
+# -mod=mod erlaubt go build auch wenn go.sum nicht perfekt aktuell ist
+RUN GOFLAGS="-mod=mod" go mod download
 
 COPY . .
 
 ARG VERSION=dev
-RUN CGO_ENABLED=1 GOOS=linux go build \
+RUN CGO_ENABLED=1 GOOS=linux GOFLAGS="-mod=mod" go build \
     -ldflags="-s -w -X github.com/Thoomaastb/CTRLD/pkg/version.Version=${VERSION}" \
     -o /usr/local/bin/ctrld \
     ./cmd/ctrld
