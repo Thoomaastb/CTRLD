@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.15.0](https://github.com/Thoomaastb/CTRLD/compare/v0.14.6...v0.15.0) (2026-06-24)
+
+### Features
+
+* **services:** add systemd service management with PIM protection and log drawer ([52a3b3a](https://github.com/Thoomaastb/CTRLD/commit/52a3b3a86ce33c58bd08a6c626f4efa7b8422e71))
+
 ## [0.14.6](https://github.com/Thoomaastb/CTRLD/compare/v0.14.5...v0.14.6) (2026-06-22)
 
 ### Bug Fixes
