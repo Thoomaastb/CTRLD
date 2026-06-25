@@ -10,9 +10,9 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
 
-	"github.com/Thoomaastab/CTRLD/internal/metrics"
-	authmw "github.com/Thoomaastab/CTRLD/internal/middleware"
-	"github.com/Thoomaastab/CTRLD/internal/auth"
+	"github.com/Thoomaastb/CTRLD/internal/metrics"
+	authmw "github.com/Thoomaastb/CTRLD/internal/middleware"
+	"github.com/Thoomaastb/CTRLD/internal/auth"
 )
 
 const (
