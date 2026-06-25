@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.16.7](https://github.com/Thoomaastb/CTRLD/compare/v0.16.6...v0.16.7) (2026-06-25)
+
+### Bug Fixes
+
+* **build:** add killProcess stubs for windows and non-linux platforms ([96a4d32](https://github.com/Thoomaastb/CTRLD/commit/96a4d325aaaec03d16df709bd64b58e0554bb634))
+
 ## [0.16.6](https://github.com/Thoomaastb/CTRLD/compare/v0.16.5...v0.16.6) (2026-06-24)
 
 ### Bug Fixes
