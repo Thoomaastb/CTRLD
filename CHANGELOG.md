@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.16.9](https://github.com/Thoomaastb/CTRLD/compare/v0.16.8...v0.16.9) (2026-06-25)
+
+### Bug Fixes
+
+* **ui:** remove unused thresholdsLoading variable breaking type-check ([6503f44](https://github.com/Thoomaastb/CTRLD/commit/6503f44a81dc44166c0278e3ebe6fc1f5b189d02))
+
 ## [0.16.8](https://github.com/Thoomaastb/CTRLD/compare/v0.16.7...v0.16.8) (2026-06-25)
 
 ### Bug Fixes
