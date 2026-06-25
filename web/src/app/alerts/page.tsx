@@ -41,7 +41,7 @@ export default function AlertsPage() {
     refetchInterval: 30_000,
   });
 
-  const { data: thresholds, isLoading: thresholdsLoading } = useQuery({
+  const { data: thresholds } = useQuery({
     queryKey: ["alerts", "thresholds"],
     queryFn: () => apiClient.get<Threshold[]>("/alerts/thresholds"),
   });
