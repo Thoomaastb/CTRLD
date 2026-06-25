@@ -7,7 +7,7 @@
 *.prof
 coverage.out
 coverage.html
-VERSION
+/VERSION
 
 # ── Node / Web ───────────────────────────────────
 web/node_modules/
