@@ -3,12 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   typescript: {
-    // Type-Errors brechen den Production-Build nicht ab.
-    // Lokale Entwicklung + Editor zeigen sie weiterhin an.
     ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
   },
   async rewrites() {
     return [
