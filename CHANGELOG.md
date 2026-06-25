@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.16.8](https://github.com/Thoomaastb/CTRLD/compare/v0.16.7...v0.16.8) (2026-06-25)
+
+### Bug Fixes
+
+* **build:** stop gitignore from excluding pkg/version package ([19ce6d3](https://github.com/Thoomaastb/CTRLD/commit/19ce6d30cf8e22296fc6e1511d1f474e710e9289))
+
 ## [0.16.7](https://github.com/Thoomaastb/CTRLD/compare/v0.16.6...v0.16.7) (2026-06-25)
 
 ### Bug Fixes
