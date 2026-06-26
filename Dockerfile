@@ -26,7 +26,7 @@ RUN CGO_ENABLED=1 GOOS=linux go build \
     ./cmd/ctrld
 
 # Stage 3: Runtime
-FROM debian:bookworm-slim
+FROM node:24-bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl && rm -rf /var/lib/apt/lists/*
 RUN useradd --system --no-create-home --shell /sbin/nologin --home-dir /var/lib/ctrld ctrld
 RUN mkdir -p /var/lib/ctrld /etc/ctrld /app/web && chown ctrld:ctrld /var/lib/ctrld /etc/ctrld
