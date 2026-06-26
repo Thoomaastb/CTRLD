@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.16.10](https://github.com/Thoomaastb/CTRLD/compare/v0.16.9...v0.16.10) (2026-06-26)
+
+### Bug Fixes
+
+* **docker:** use node:24 runtime base so frontend can start ([960b976](https://github.com/Thoomaastb/CTRLD/commit/960b97647023596577ddc56609e8d9b1deb5f649))
+
 ## [0.16.9](https://github.com/Thoomaastb/CTRLD/compare/v0.16.8...v0.16.9) (2026-06-25)
 
 ### Bug Fixes
