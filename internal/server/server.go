@@ -132,6 +132,7 @@ func (s *Server) setupGuard(setupSvc *setup.Service) func(http.Handler) http.Han
 				"/api/v1/setup/",
 				"/api/v1/auth/login",
 				"/api/v1/auth/refresh",
+				"/api/v1/auth/mfa/",
 				"/api/v1/health",
 			}
 			path := r.URL.Path
