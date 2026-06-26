@@ -3,6 +3,12 @@
 All notable changes to CTRLD are documented here.
 Format: [Semantic Versioning](https://semver.org)
 
+## [0.16.11](https://github.com/Thoomaastb/CTRLD/compare/v0.16.10...v0.16.11) (2026-06-26)
+
+### Bug Fixes
+
+* **setup:** allow MFA endpoints through setup guard so TOTP enrollment works ([6332459](https://github.com/Thoomaastb/CTRLD/commit/6332459989bb959d21b4e6d80bea2e8f9d6199c8))
+
 ## [0.16.10](https://github.com/Thoomaastb/CTRLD/compare/v0.16.9...v0.16.10) (2026-06-26)
 
 ### Bug Fixes
